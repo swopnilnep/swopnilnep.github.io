@@ -1,4 +1,4 @@
 # swopnilnep.github.io
 
 Webpage to host personal and career content. 
-Here are quick links to my [resume](https://drive.google.com/file/d/1eXOK40mClKoz2ga5rGpjcXhWbgvhCsy_/view?usp=sharing) and my [LinkedIn](https://linkedin.com/in/swopnilnep)
+Here are quick links to my [resume](https://swopnilnep.github.io/files/swopnil_resume.pdf) and my [LinkedIn](https://linkedin.com/in/swopnilnep)
