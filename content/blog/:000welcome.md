@@ -1,6 +1,6 @@
 ---
 title: "Welcome"
-date: 2020-10-03T00:10:20-05:00
+date: 2019-04-01T00:10:20-05:00
 slug: ""
 description: "Obligatory first post"
 keywords: [hello world, blog, software engineer, intern, student blog, student, computer science, hugo]
@@ -11,6 +11,6 @@ toc: false
 ---
 
 
-> "Hello, World!"
+`"Hello, World!"`
 
 This is the obligatory first post. Welcome to my blog.

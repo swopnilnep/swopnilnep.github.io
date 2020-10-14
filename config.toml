@@ -53,9 +53,9 @@ copyright = "© Swopnil Shrestha {year}"
 
 # Controls the navigation
 [[menu.main]]
-  identifier = "about"
-  name = "about"
-  title = "About"
+  identifier = "home"
+  name = "home"
+  title = "Home"
   url = "/"
 
 [[menu.main]]
@@ -63,6 +63,12 @@ copyright = "© Swopnil Shrestha {year}"
   name = "blog"
   title = "Blog"
   url = "/blog"
+
+[[menu.main]]
+  identifier = "about"
+  name = "about"
+  title = "About"
+  url = "/about"
 
 [[menu.main]]
   identifier = "work"
@@ -74,4 +80,4 @@ copyright = "© Swopnil Shrestha {year}"
   identifier = "resume"
   name = "resumé"
   title = "resume"
-  url = "/resume"
+  url = "https://swopnilnep.com/resume/SwopnilShrestha-Resume.pdf"
