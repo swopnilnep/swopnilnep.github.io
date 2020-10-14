@@ -8,28 +8,4 @@ math: false
 toc: false
 ---
 
-<<<<<<< HEAD
 Coming soon... 
-=======
-Will be updated soon..
-fasdfd
-
-
-fasdff
-
-asdfd
-d
-d
-d
-d
-d
-d
-d
-d
-d
-d
-d
-d
-d
-d
->>>>>>> parent of 4a570b1... Fix about section
