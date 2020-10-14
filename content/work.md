@@ -1,5 +1,12 @@
 ---
 title: "Work Experience"
+toc: false
+description: "An analysis of disability based unemployment discrimination in the US economic policy"
+keywords: [disability]
+draft: false
+tags: []
+math: false
+toc: false
 ---
 
 Need a copy of my resume? [Click here](https://swopnilnep.com/resume/SwopnilShrestha-Resume.pdf)

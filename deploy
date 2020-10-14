@@ -5,6 +5,6 @@ cd /Users/swopnilnep/projects/proj-swopnil-website/development
 hugo -D -d ../remote
 cd ../remote
 git add .
-git commit -m "[Automated deployment]:cid" 
+git commit -m "[Automated deployment]:$cid" 
 git push origin master
 echo "Deployment complete!"
