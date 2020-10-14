@@ -1,0 +1,10 @@
+
+cid=$(git rev-parse HEAD)
+echo "Deploying to GitHub Sites..."
+cd /Users/swopnilnep/projects/proj-swopnil-website/development
+hugo -D -d ../remote
+cd ../remote
+git add .
+git commit -m "[Automated deployment]:cid" 
+git push origin master
+echo "Deployment complete!"
