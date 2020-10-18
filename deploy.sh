@@ -3,7 +3,7 @@ cd /Users/swopnilnep/projects/proj-swopnil-website/development
 echo "======= Step 1: Building Hugo Static Pages ======="
 
 # Get current Git Commit hash
-$cid=$(git rev-parse HEAD)
+cid=$(git rev-parse HEAD)
 hugo -D -d ../remote
 cd ../remote
 
