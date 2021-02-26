@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Blogs on Swopnil Shrestha | Software Engineer</title>
-    <link>https://swopnilnep.com/blog/</link>
-    <description>Recent content in Blogs on Swopnil Shrestha | Software Engineer</description>
+    <title>Economics on Swopnil Shrestha | Software Engineer</title>
+    <link>https://swopnilnep.com/tags/economics/</link>
+    <description>Recent content in Economics on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 16 Oct 2020 02:40:57 -0500</lastBuildDate><atom:link href="https://swopnilnep.com/blog/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Setting Up: Getting Started with Hugo Sites</title>
-      <link>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</link>
-      <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
-      
-      <guid>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</guid>
-      <description>Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;ldquo;Building a Personal Static Website&amp;rdquo; workshop on 2020, Oct 18th.
-If you have any questions or trouble with this tutorial, you can message the Luther ACM Slack channel.
-Philosophy Hugo is a fast, flexible static site generator, one of the most popular open source generators among the numerous static site generators available.</description>
-    </item>
-    
+    <lastBuildDate>Sat, 03 Oct 2020 02:08:54 -0500</lastBuildDate><atom:link href="https://swopnilnep.com/tags/economics/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Disability Underemployment in the United States: A Product of Structural Impairments</title>
       <link>https://swopnilnep.com/blog/disability-unemployment-us-ada/</link>
@@ -36,25 +25,6 @@ Philosophy Hugo is a fast, flexible static site generator, one of the most popul
       <guid>https://swopnilnep.com/blog/us-china-ai-relations/</guid>
       <description>人工智能经济中的中国和美国
 Current State of AI in the World (世界AI的现状) Artificial Intelligence (AI) was founded on the premise that computational intelligence could match or surpass the intelligence of a human. Also called 人工智能 in simplified Chinese, this term describes machines that are capable doing complex and high-level jobs that only humans are currently capable of doing, having cognitive functions with the human mind like learning and function. Since its conception in 1956 as an academic discipline, AI has already been able to impact our lives in a massive way, revolutionizing many aspects of industry with tasks such as text, speech and image recognition, autonomous driving, content delivery networks music and art.</description>
-    </item>
-    
-    <item>
-      <title>Welcome</title>
-      <link>https://swopnilnep.com/blog/welcome/</link>
-      <pubDate>Mon, 01 Apr 2019 00:10:20 -0500</pubDate>
-      
-      <guid>https://swopnilnep.com/blog/welcome/</guid>
-      <description>&amp;quot;Hello, World!&amp;quot;
-This is the obligatory first post. Welcome to my blog.</description>
-    </item>
-    
-    <item>
-      <title>Automating Deployment of Hugo Sites</title>
-      <link>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</guid>
-      <description>Coming soon&amp;hellip;</description>
     </item>
     
   </channel>
