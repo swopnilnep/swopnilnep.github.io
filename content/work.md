@@ -1,7 +1,7 @@
 ---
-title: "Work Experience"
+title: "Work"
 toc: false
-description: "An analysis of disability based unemployment discrimination in the US economic policy"
+description: "Summary of my work experience"
 keywords: []
 draft: false
 tags: []
@@ -9,15 +9,30 @@ math: false
 toc: false
 ---
 
-Need a copy of my resume? [Click here](https://swopnilnep.com/resume/SwopnilShrestha-Resume.pdf)
+I have worked at a few places including WiseYak, CloudFactory and Venio Systems. I was also the President of the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a> until Jan 2021. 
 
-Note: Please `cmd + click` (MacOS) or `ctlr + click` (Windows) to open links in a few tab.
+Currently, I am looking for full-stack Software Engineering positions in a position that will challenge me and enable me to grow as an engineer. 
 
-### Software Engineering Intern
+Looking for my resume? <a style="text-decoration: none;" href="https://swopnil.com/resume/SwopnilShrestha-Resume.pdf" target="_blank"> <code> 📄 SwopnilShrestha-Resume.pdf</code></a>
+## Principles 
+
+I believe that an organization should be guided by a set of core values that each member of that organization can look towards to find guidance. Here are some values that resonate with me:
+
+1. Workers should take ownership of their work, and be able to find pride in what they do. 
+2. Long term-value should not be sacrificed for short term results. 
+3. Standards for what is acceptable should be high. 
+4. Team members should be curious and should consistently learn and improve themselves. Learning is a constant, iterative, and lifelong process.
+5. Everyone, regardless of differences should be treated with dignity. 
+6. Teams should be open to new ideas. Innovation should not be limited by a mentality of "I'm not used to it".
+7. Building trust is important, and trust begins with transparency. 
+
+## Relevant Work History
+
+All of my work at various companies related to software engineering.
+
+#### Software Engineering Intern
 **WiseYak, Inc.**
 <br>*May 2020 - Aug 2020 • Bellevue, WA (Remote)*
-
-> `AI Driven Healthcare Technology Firm directed by leading NLP and Graph Database researchers`
 
 Piloted an AI-driven virtual care platform to remotely connect patients to doctors and hospitals from the prototyping stage under supervision of [Dr. Suresh Manandhar](https://pure.york.ac.uk/portal/en/researchers/suresh-manandhar(8203db62-862a-47f3-9507-71cba0d699a0).html). Contributed to more than 30% of the codebase and devised testing strategy.
 
@@ -26,11 +41,10 @@ Read more:
 * [Telemedicine Platform: VOD](https://vod.wiseyak.com/login/?next=/)
 * [Blog Post]()
 
-### President
+---
+#### President
 **Association for Computing Machinery at Luther College**
-<br>*Jan 2020 - Present • Decorah, IA*
-
-> `Legislative Technology Company Specializing in Machine Learning Based Electronic Discovery`
+<br>*Jan 2020 - Jan 2021 • Decorah, IA*
 
 Instructed lessons relevant to topics in software engineering, and computing research / industry to 20+ student developers. Organized events and facilitated monthly panels and discussions with prominent figures in computer science.
 
@@ -38,19 +52,19 @@ Read more:
 * [GitHub: LutherCSS](https://github.com/luthercss)
 * [Organization Website](https://luthercss.github.io/)
 
-### Software Engineering Intern
+---
+#### Software Engineering Intern
 **Venio Systems**
 <br>*May 2019 - Aug 2019 • Fairfax, VA*
-
-> `Team of students who organize events and discussions for 150+ student/ faculty members about topics in Computer Science & technology`
 
 Designed a developed an email analytics tool that utilized social network graphs to identify unlawful communications within gigabytes of email data. Integrated tool into existing framework for the Venio One platform used by 50+ companies.
 
 Read more:
 * [VenioOne Product Description](https://www.veniosystems.com/ediscovery-software-venio-one-legal-discovery/)
-* [Blog Post: Viz]()
+* [GitHub: Viz Email Analytics](https://github.com/swopnilnep/viz-email-analytics)
 
-### Data Engineering Intern
+---
+#### Data Engineering Intern
 **CloudFactory**
 <br>*May 2018 - Aug 2018 • Kathmandu*
 
@@ -59,11 +73,10 @@ Engineered a web tool that visualized real-time performance measures (throughput
 Read more:
 * [CloudFactory Blog](https://blog.cloudfactory.com/)
 
-### Business Development Intern
+---
+#### Business Development Intern
 **Portal Bikes**
 <br>*Jun 2016 - Aug 2017 • Kathmandu*
-
-> Social Enterprise focused on empowering people to escape poverty through adaptable and innovative bicycles
 
 Piloted a social media campaign to empower women to adopt cycling in Nepal. Conducted research for market viability of new products.
 
