@@ -3,18 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://swopnilnep.com/</loc>
-    <lastmod>2020-10-16T02:40:57-05:00</lastmod>
+    <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
     <loc>https://swopnilnep.com/blog/</loc>
+    <lastmod>2020-12-25T22:54:18-06:00</lastmod>
+  </url><url>
+    <loc>https://swopnilnep.com/tags/machine-learning/</loc>
+    <lastmod>2020-12-25T22:54:18-06:00</lastmod>
+  </url><url>
+    <loc>https://swopnilnep.com/tags/python/</loc>
+    <lastmod>2020-12-25T22:54:18-06:00</lastmod>
+  </url><url>
+    <loc>https://swopnilnep.com/tags/</loc>
+    <lastmod>2020-12-25T22:54:18-06:00</lastmod>
+  </url><url>
+    <loc>https://swopnilnep.com/blog/tensorflow-introduction-to-machine-learning/</loc>
+    <lastmod>2020-12-25T22:54:18-06:00</lastmod>
+  </url><url>
+    <loc>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</loc>
+    <lastmod>2020-10-16T02:40:57-05:00</lastmod>
+  </url><url>
+    <loc>https://swopnilnep.com/tags/hugo/</loc>
     <lastmod>2020-10-16T02:40:57-05:00</lastmod>
   </url><url>
     <loc>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</loc>
     <lastmod>2020-10-16T02:40:57-05:00</lastmod>
   </url><url>
     <loc>https://swopnilnep.com/tags/software-engineering/</loc>
-    <lastmod>2020-10-16T02:40:57-05:00</lastmod>
-  </url><url>
-    <loc>https://swopnilnep.com/tags/</loc>
     <lastmod>2020-10-16T02:40:57-05:00</lastmod>
   </url><url>
     <loc>https://swopnilnep.com/blog/disability-unemployment-us-ada/</loc>
@@ -31,11 +46,7 @@
   </url><url>
     <loc>https://swopnilnep.com/about/</loc>
   </url><url>
-    <loc>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</loc>
-  </url><url>
     <loc>https://swopnilnep.com/categories/</loc>
-  </url><url>
-    <loc>https://swopnilnep.com/tags/hugo/</loc>
   </url><url>
     <loc>https://swopnilnep.com/work/</loc>
   </url>

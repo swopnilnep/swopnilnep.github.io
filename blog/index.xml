@@ -7,7 +7,26 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 16 Oct 2020 02:40:57 -0500</lastBuildDate><atom:link href="https://swopnilnep.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="https://swopnilnep.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TensorFlow: Introduction to Machine Learning</title>
+      <link>https://swopnilnep.com/blog/tensorflow-introduction-to-machine-learning/</link>
+      <pubDate>Fri, 25 Dec 2020 22:54:18 -0600</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/tensorflow-introduction-to-machine-learning/</guid>
+      <description>About The Introduction to Machine Learning Crash course, from Google which teaches Machine Learning Fundamentals using TensorFlow is a popular and brilliant way to begin Machine Learning. I took this self-paced over the time of a few weeks in 2018 and took some notes as I went.
+This blog post are my summary notes for that course. In addition to taking notes for the course, I also put together a playlist for all the videos of that course, for those who prefer to learn solely from YouTube.</description>
+    </item>
+    
+    <item>
+      <title>Automating Deployment of Hugo Sites</title>
+      <link>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</link>
+      <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Setting Up: Getting Started with Hugo Sites</title>
       <link>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</link>
@@ -46,15 +65,6 @@ Current State of AI in the World (世界AI的现状) Artificial Intelligence (AI
       <guid>https://swopnilnep.com/blog/welcome/</guid>
       <description>&amp;quot;Hello, World!&amp;quot;
 This is the obligatory first post. Welcome to my blog.</description>
-    </item>
-    
-    <item>
-      <title>Automating Deployment of Hugo Sites</title>
-      <link>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</guid>
-      <description>Coming soon&amp;hellip;</description>
     </item>
     
   </channel>

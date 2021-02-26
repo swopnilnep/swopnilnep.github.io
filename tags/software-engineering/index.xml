@@ -9,6 +9,15 @@
     <copyright>© Swopnil Shrestha {year}</copyright>
     <lastBuildDate>Fri, 16 Oct 2020 02:40:57 -0500</lastBuildDate><atom:link href="https://swopnilnep.com/tags/software-engineering/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Automating Deployment of Hugo Sites</title>
+      <link>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</link>
+      <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Setting Up: Getting Started with Hugo Sites</title>
       <link>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</link>
       <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
@@ -17,15 +26,6 @@
       <description>Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;ldquo;Building a Personal Static Website&amp;rdquo; workshop on 2020, Oct 18th.
 If you have any questions or trouble with this tutorial, you can message the Luther ACM Slack channel.
 Philosophy Hugo is a fast, flexible static site generator, one of the most popular open source generators among the numerous static site generators available.</description>
-    </item>
-    
-    <item>
-      <title>Automating Deployment of Hugo Sites</title>
-      <link>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</guid>
-      <description>Coming soon&amp;hellip;</description>
     </item>
     
   </channel>
