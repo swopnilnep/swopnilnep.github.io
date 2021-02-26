@@ -1,5 +1,5 @@
 ---
 heading: "Hi, I'm Swopnil"
-subheading: "I am a Computer Science student living in Decorah, IA."
 # handle: "swopnilnep"
+subheading: "I am a Computer Science student at Luther College with a knack for security, entrepreneurship and privacy on the web."
 ---

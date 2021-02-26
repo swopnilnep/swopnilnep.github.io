@@ -6,18 +6,21 @@
 
 <div class="splash-container">
   <div class="splash">
-    
     <h1>{{ .Params.heading }}<span class="fancy">.</span></h1>
     {{ if isset .Params "handle" }}
     <span class="handle">@{{ .Params.handle }}</span>
     {{ end }}
-    <h2>
+    <h3 style="max-width: 650px;">
       {{ .Params.subheading }}
-    </h2>
-    <p>I build software and write blogs on topics that interest me. I will be graduating this <code>May</code>, 
-    actively looking for <code>Software Engineering</code> full-time and internship 
-    positions for Fall 2021.</p>
+    </h3>
+    <p>
+      {{ .Params.description }}
+    </p>
+
+    <p style="max-width: 500px;">I build robust, well-tested and secure applications for the web. In my free time, I <a href="https://www.librarything.com/profile/swopnil" target="_blank"> read books</a>, mountain bike, write blog posts, and <code>code.</code></p>
+    <p style="max-width: 500px;"><small>If you would like to reach me securely, <a href="https://swopnil.com/pgp" target="_blank">encrypt</a> your message with this <a href="https://keybase.io/swopnil/pgp_keys.asc?fingerprint=a530a5ed4c7985a1fa4fa32db38677b5c56e8796" target="_blank".>PGP key</a> and send it to <code>secure @ swopnil.com</code> </small></p>
     {{ partial "social-icons.html" .}}
+    
   </div>
 </div>
 

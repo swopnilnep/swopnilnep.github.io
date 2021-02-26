@@ -20,7 +20,7 @@ copyright = "© Swopnil Shrestha {year}"
   twitter = "https://twitter.com/swopnilnep"
   github = "https://github.com/swopnilnep"
   linkedin = "https://linkedin.com/in/swopnilnep"
-  email = "mailto:web+out@swopnilnep.com"
+  # email = "mailto:web+out@swopnilnep.com"
   
   # facebook = "https://facebook.com/<your handle>"
   # gitlab = "https://gitlab.com/<your handle>"
@@ -53,9 +53,9 @@ copyright = "© Swopnil Shrestha {year}"
 
 # Controls the navigation
 [[menu.main]]
-  identifier = "home"
-  name = "home"
-  title = "Home"
+  identifier = "about"
+  name = "about"
+  title = "about"
   url = "/"
 
 [[menu.main]]
@@ -65,19 +65,7 @@ copyright = "© Swopnil Shrestha {year}"
   url = "/blog"
 
 [[menu.main]]
-  identifier = "about"
-  name = "about"
-  title = "About"
-  url = "/about"
-
-[[menu.main]]
   identifier = "work"
   name = "work"
   title = "work"
   url = "/work"
-
-[[menu.main]]
-  identifier = "resume"
-  name = "resumé"
-  title = "resume"
-  url = "https://swopnilnep.com/resume/SwopnilShrestha-Resume.pdf"

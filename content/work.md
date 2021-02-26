@@ -2,7 +2,7 @@
 title: "Work Experience"
 toc: false
 description: "An analysis of disability based unemployment discrimination in the US economic policy"
-keywords: [disability]
+keywords: []
 draft: false
 tags: []
 math: false

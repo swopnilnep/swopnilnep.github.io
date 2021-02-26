@@ -5,7 +5,7 @@ slug: ""
 description: ""
 keywords: []
 draft: false
-tags: []
+tags: [economics]
 math: false
 toc: true
 ---
