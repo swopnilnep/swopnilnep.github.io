@@ -16,7 +16,7 @@ echo "======= Step 1: Building Hugo Static Pages ======="
 
 # Get current Git Commit hash
 cid=$(git rev-parse HEAD)
-hugo -D -d ../remote
+hugo -d ../remote
 cd ../remote
 
 echo "======= Step 2: Staging Commits ======="
