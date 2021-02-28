@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>hugo on Swopnil Shrestha | Software Engineer</title>
-    <link>http://swopnil.com/tags/hugo/</link>
+    <link>https://swopnil.com/tags/hugo/</link>
     <description>Recent content in hugo on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 16 Oct 2020 02:40:57 -0500</lastBuildDate><atom:link href="http://swopnil.com/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 16 Oct 2020 02:40:57 -0500</lastBuildDate><atom:link href="https://swopnil.com/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Automating Deployment of Hugo Sites</title>
-      <link>http://swopnil.com/blog/deployment-automation-for-hugo-sites/</link>
+      <link>https://swopnil.com/blog/deployment-automation-for-hugo-sites/</link>
       <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
       
-      <guid>http://swopnil.com/blog/deployment-automation-for-hugo-sites/</guid>
+      <guid>https://swopnil.com/blog/deployment-automation-for-hugo-sites/</guid>
       <description></description>
     </item>
     

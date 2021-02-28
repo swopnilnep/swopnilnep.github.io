@@ -2,54 +2,54 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Swopnil Shrestha | Software Engineer</title>
-    <link>http://swopnil.com/tags/</link>
+    <link>https://swopnil.com/tags/</link>
     <description>Recent content in Tags on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="http://swopnil.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="https://swopnil.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>machine-learning</title>
-      <link>http://swopnil.com/tags/machine-learning/</link>
+      <link>https://swopnil.com/tags/machine-learning/</link>
       <pubDate>Fri, 25 Dec 2020 22:54:18 -0600</pubDate>
       
-      <guid>http://swopnil.com/tags/machine-learning/</guid>
+      <guid>https://swopnil.com/tags/machine-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>python</title>
-      <link>http://swopnil.com/tags/python/</link>
+      <link>https://swopnil.com/tags/python/</link>
       <pubDate>Fri, 25 Dec 2020 22:54:18 -0600</pubDate>
       
-      <guid>http://swopnil.com/tags/python/</guid>
+      <guid>https://swopnil.com/tags/python/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hugo</title>
-      <link>http://swopnil.com/tags/hugo/</link>
+      <link>https://swopnil.com/tags/hugo/</link>
       <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
       
-      <guid>http://swopnil.com/tags/hugo/</guid>
+      <guid>https://swopnil.com/tags/hugo/</guid>
       <description></description>
     </item>
     
     <item>
       <title>software-engineering</title>
-      <link>http://swopnil.com/tags/software-engineering/</link>
+      <link>https://swopnil.com/tags/software-engineering/</link>
       <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
       
-      <guid>http://swopnil.com/tags/software-engineering/</guid>
+      <guid>https://swopnil.com/tags/software-engineering/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Economics</title>
-      <link>http://swopnil.com/tags/economics/</link>
+      <link>https://swopnil.com/tags/economics/</link>
       <pubDate>Sat, 03 Oct 2020 02:08:54 -0500</pubDate>
       
-      <guid>http://swopnil.com/tags/economics/</guid>
+      <guid>https://swopnil.com/tags/economics/</guid>
       <description></description>
     </item>
     
