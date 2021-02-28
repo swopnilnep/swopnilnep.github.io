@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Swopnil Shrestha | Software Engineer</title>
+    <link>https://swopnilnep.com/</link>
+    <description>Recent content on Swopnil Shrestha | Software Engineer</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Swopnil Shrestha {year}</copyright>
+    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="https://swopnilnep.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TensorFlow: Introduction to Machine Learning</title>
+      <link>https://swopnilnep.com/blog/tensorflow-introduction-to-machine-learning/</link>
+      <pubDate>Fri, 25 Dec 2020 22:54:18 -0600</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/tensorflow-introduction-to-machine-learning/</guid>
+      <description>About The Introduction to Machine Learning Crash course, from Google which teaches Machine Learning Fundamentals using TensorFlow is a popular and brilliant way to begin Machine Learning. I took this self-paced over the time of a few weeks in 2018 and took some notes as I went.
+This blog post are my summary notes for that course. In addition to taking notes for the course, I also put together a playlist for all the videos of that course, for those who prefer to learn solely from YouTube.</description>
+    </item>
+    
+    <item>
+      <title>Automating Deployment of Hugo Sites</title>
+      <link>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</link>
+      <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/deployment-automation-for-hugo-sites/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Setting Up: Getting Started with Hugo Sites</title>
+      <link>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</link>
+      <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/getting-started-with-hugo-sites/</guid>
+      <description>Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;ldquo;Building a Personal Static Website&amp;rdquo; workshop on 2020, Oct 18th.
+If you have any questions or trouble with this tutorial, you can message the Luther ACM Slack channel.
+Philosophy Hugo is a fast, flexible static site generator, one of the most popular open source generators among the numerous static site generators available.</description>
+    </item>
+    
+    <item>
+      <title>Disability Underemployment in the United States: A Product of Structural Impairments</title>
+      <link>https://swopnilnep.com/blog/disability-unemployment-us-ada/</link>
+      <pubDate>Sat, 03 Oct 2020 02:08:54 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/disability-unemployment-us-ada/</guid>
+      <description>Introduction Issues of employment are of the utmost importance to disabled individuals in the United States as it determines the quality of life they will have. Whether a disabled individual is able to support a family and pursue their own dreams or lives a meager life in poverty often correlates with their place on the economic ladder. How will the disabled individual provide for their family? How will they afford to buy a house or purchase goods that they require for self-sustenance?</description>
+    </item>
+    
+    <item>
+      <title>The United States and China in the AI Economy</title>
+      <link>https://swopnilnep.com/blog/us-china-ai-relations/</link>
+      <pubDate>Tue, 10 Sep 2019 12:27:37 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/us-china-ai-relations/</guid>
+      <description>人工智能经济中的中国和美国
+Current State of AI in the World (世界AI的现状) Artificial Intelligence (AI) was founded on the premise that computational intelligence could match or surpass the intelligence of a human. Also called 人工智能 in simplified Chinese, this term describes machines that are capable doing complex and high-level jobs that only humans are currently capable of doing, having cognitive functions with the human mind like learning and function. Since its conception in 1956 as an academic discipline, AI has already been able to impact our lives in a massive way, revolutionizing many aspects of industry with tasks such as text, speech and image recognition, autonomous driving, content delivery networks music and art.</description>
+    </item>
+    
+    <item>
+      <title>Welcome</title>
+      <link>https://swopnilnep.com/blog/welcome/</link>
+      <pubDate>Mon, 01 Apr 2019 00:10:20 -0500</pubDate>
+      
+      <guid>https://swopnilnep.com/blog/welcome/</guid>
+      <description>&amp;quot;Hello, World!&amp;quot;
+This is the obligatory first post. Welcome to my blog.</description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>https://swopnilnep.com/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://swopnilnep.com/about/</guid>
+      <description>Coming soon&amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Work</title>
+      <link>https://swopnilnep.com/work/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://swopnilnep.com/work/</guid>
+      <description>I have worked at a few places including WiseYak, CloudFactory and Venio Systems. I was also the President of the ACM Luther College until Jan 2021.
+Currently, I am looking for full-stack Software Engineering positions in a position that will challenge me and enable me to grow as an engineer.
+Looking for my resume?  📄 SwopnilShrestha-Resume.pdf
+Principles I believe that an organization should be guided by a set of core values that each member of that organization can look towards to find guidance.</description>
+    </item>
+    
+  </channel>
+</rss>
