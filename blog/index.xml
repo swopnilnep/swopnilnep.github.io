@@ -39,6 +39,17 @@ Philosophy Hugo is a fast, flexible static site generator, one of the most popul
     </item>
     
     <item>
+      <title>Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)</title>
+      <link>https://swopnil.com/blog/microsoft-dat101x-notes/</link>
+      <pubDate>Tue, 16 Jun 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnil.com/blog/microsoft-dat101x-notes/</guid>
+      <description>In summer of 2018, I took a short module from Microsoft on Coursera, called DAT101x. The course was an Introduction to the fundamental concepts in Data Science with a brief preview of some ideas in Machine Learning, such as linear regression.
+In addition to teaching Data Science Fundamentals, the course also introduced various ways to do Data Science in Microsoft products such as Excel or Azure Data Science Studio.
+I found it a great course for both reasons.</description>
+    </item>
+    
+    <item>
       <title>The United States and China in the AI Economy</title>
       <link>https://swopnil.com/blog/us-china-ai-relations/</link>
       <pubDate>Tue, 10 Sep 2019 12:27:37 -0500</pubDate>

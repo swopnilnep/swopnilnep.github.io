@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <title>Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel) | Swopnil Shrestha | Software Engineer</title>
+
+  <meta charset="UTF-8">
+  <meta name="language" content="en">
+  <meta name="description" content="Summary notes for the Microsoft Introduction to Data Science Course">
+  <meta name="keywords" content="Microsoft , Data Science , Machine Learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)" />
+  <meta name="twitter:description" content="Summary notes for the Microsoft Introduction to Data Science Course"/>
+  <meta name="twitter:site" content="https://twitter.com/swopnilnep" />
+  <meta name="twitter:creator" content="https://twitter.com/swopnilnep" />
+  
+
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+
+  
+  
+    
+ 
+  
+  
+  
+  
+  
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/post.min.344aba48482830cde60a664893ee57045bd1157ef23963f9f6b00f2f2f1aefcc.css"/>
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/custom.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css"/>
+  
+  
+   
+   
+    
+
+<script type="application/ld+json">
+  
+    {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/swopnil.com"
+      },
+      "articleSection" : "blog",
+      "name" : "Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)",
+      "headline" : "Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)",
+      "description" : "Summary notes for the Microsoft Introduction to Data Science Course",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "2020",
+      "datePublished": "2020-06-16 02:40:57 -0500 CDT",
+      "dateModified" : "2020-06-16 02:40:57 -0500 CDT",
+      "url" : "https:\/\/swopnil.com\/blog\/microsoft-dat101x-notes\/",
+      "wordCount" : "1183",
+      "keywords" : ["Microsoft", "Data Science", "Machine Learning", "Blog"]
+    }
+  
+  </script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131922110-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</head>
+
+<body>
+  <div class="burger__container">
+  <div class="burger" aria-controls="navigation" aria-label="Menu">
+    <div class="burger__meat burger__meat--1"></div>
+    <div class="burger__meat burger__meat--2"></div>
+    <div class="burger__meat burger__meat--3"></div>
+  </div>
+</div>
+ 
+
+  <nav class="nav" id="navigation">
+  <ul class="nav__list">
+    
+    
+      <li>
+        <a  href="/">about</a>
+      </li>
+    
+      <li>
+        <a  class="active"
+         href="/blog">blog</a>
+      </li>
+    
+      <li>
+        <a  href="/work">work</a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+  <main>
+    
+    
+
+    <div class="flex-wrapper">
+      <div class="post__container">
+        <div class="post">
+          <header class="post__header">
+            <h1 id="post__title">Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)</h1>
+            <time datetime="2020-06-16 02:40:57 -0500 CDT" class="post__date">Jun 16 2020</time> 
+          </header>
+          <article class="post__content">
+              
+<p>In summer of 2018, I took a short module from Microsoft on Coursera, called <a href="https://learning.edx.org/course/course-v1:Microsoft+DAT101x+1T2018/home">DAT101x</a>. The course was an Introduction to the fundamental concepts in Data Science with a brief preview of some ideas in Machine Learning, such as linear regression.</p>
+<p>In addition to teaching Data Science Fundamentals, the course also introduced various ways to do Data Science in Microsoft products such as Excel or Azure Data Science Studio.</p>
+<p>I found it a great course for both reasons. If you are interested in getting a fundamental understanding of Data Science, I recommend it to you.</p>
+<p>This blog post includes the summary notes I took for the entire course. Enjoy!</p>
+<h2 id="module-1-an-introduction-to-data">Module 1: An Introduction to Data<a class="anchor" href="#module-1-an-introduction-to-data">#</a></h2>
+<p>Intro: Exploring Data</p>
+<h3 id="why-do-you-like-being-a-data-scientist"><strong>Why do you like being a data scientist?</strong><a class="anchor" href="#why-do-you-like-being-a-data-scientist">#</a></h3>
+<ul>
+<li>
+<p>The world’s data is set to be doubling every couple of years</p>
+</li>
+<li>
+<p>Working with terabytes of data and making interpretations</p>
+</li>
+<li>
+<p>Exciting time to be a data scientist / Working with people in different fields</p>
+</li>
+</ul>
+<h4 id="what-does-a-data-scientist-do"><strong>What does a data scientist do?</strong></h4>
+<ul>
+<li>
+<p>Cleaning data (good enough to be trustworthy) — biggest challenge</p>
+</li>
+<li>
+<p>Understanding and prepping the data</p>
+</li>
+<li>
+<p>Seeing what kind of data formulations</p>
+</li>
+<li>
+<p>Parsing the data</p>
+</li>
+</ul>
+<h4 id="what-kind-of-person-succeeds"><strong>What kind of person succeeds?</strong></h4>
+<ul>
+<li>
+<p>You need to like data (dream about it!)</p>
+</li>
+<li>
+<p>Curiosity</p>
+</li>
+<li>
+<p>Collaborative and a problem solver (working with various individuals)</p>
+</li>
+<li>
+<p>Quick Learner</p>
+</li>
+<li>
+<p>New methodologies coming up everyday</p>
+</li>
+</ul>
+<h4 id="what-skills-does-a-data-scientist-need"><strong>What skills does a data scientist need?</strong></h4>
+<ul>
+<li>
+<p>Handle on the statistics</p>
+</li>
+<li>
+<p>Communicate your findings to people</p>
+</li>
+<li>
+<p>Programming Languages (R, Python)</p>
+</li>
+<li>
+<p>Transform (using R, Azure etc)</p>
+</li>
+</ul>
+<h4 id="aspiring-data-scientist"><strong>Aspiring Data Scientist?</strong></h4>
+<ul>
+<li>
+<p>Take some courses</p>
+</li>
+<li>
+<p>Look at available data spreads (<a href="http://data.gov/">data.gov</a>)</p>
+</li>
+<li>
+<p>Create models, write blogs (Machine Learning, get noticed by big companies)</p>
+</li>
+<li>
+<p>Work on projects that you are excited about (with people that inspire you, and seek to solve problems)</p>
+</li>
+</ul>
+<p>“Your Experience and your work is your currency”</p>
+<h3 id="11-getting-started-with-data"><strong>1.1 Getting Started with Data</strong><a class="anchor" href="#11-getting-started-with-data">#</a></h3>
+<p>“It is important to understand the fields of data and the kinds of information they hold”</p>
+<h4 id="fields-of-data"><strong>Fields of Data</strong></h4>
+<ul>
+<li>
+<p>Temporal: Relating to time (can do calculations but are not the same as numeric calculations)</p>
+</li>
+<li>
+<p>Text: They are strings and are usually represented as categorical data (ex. Sunday, Monday, Tuesday etc.)</p>
+</li>
+<li>
+<p>Numeric Data: Data that can be represented by a number</p>
+</li>
+<li>
+<p>Continuous Data: Can be put on a scale and compared with highest and lowest</p>
+</li>
+<li>
+<p>Discrete Data: Usually counting numbers</p>
+</li>
+</ul>
+<p>Sorting and Filtering Data</p>
+<ul>
+<li>
+<p>Need to be aware of outliers (and filter them if needed)</p>
+</li>
+<li>
+<p>Cutoff data at points to get a better comparison</p>
+</li>
+</ul>
+<h4 id="derived-data"><strong>Derived Data</strong></h4>
+<ul>
+<li>Making new fields based on fields that already exist (ex. average, sum etc)</li>
+</ul>
+<p>Highlighting</p>
+<ul>
+<li>
+<p>Using Color intensity to visualize the value (heatmap data)</p>
+</li>
+<li>
+<p>Relative size using data bars</p>
+</li>
+</ul>
+<h4 id="lab-1"><strong>Lab 1</strong></h4>
+<p>Weekday with the lowest temperature: Date 12/5/2017 T 22 R 1.82 F 11 Price 0.3 Sales 10</p>
+<p>Number of flyers distributed in the month of Jan: 727</p>
+<h2 id="module-2-data-analysis-fundamentals">Module 2: Data Analysis Fundamentals<a class="anchor" href="#module-2-data-analysis-fundamentals">#</a></h2>
+<h3 id="21-aggregating-data"><strong>2.1 Aggregating Data</strong><a class="anchor" href="#21-aggregating-data">#</a></h3>
+<ul>
+<li>
+<p>First step to perform when you summarize the data</p>
+</li>
+<li>
+<p>Categorical Data: Distinct Count</p>
+</li>
+<li>
+<p>Sum: Common Aggregation of Interest (Numerical Data)</p>
+</li>
+</ul>
+<h4 id="visual-representation"><strong>Visual Representation</strong></h4>
+<ul>
+<li>
+<p>Line Graph: Changes in Values over time</p>
+</li>
+<li>
+<p>Pie Chart: Shows the percentage (Data Scientists don’t use it often)</p>
+</li>
+<li>
+<p>Bar Chart: Multiple Categories (Categorical Variables), you can add multiple series</p>
+</li>
+<li>
+<p>Scatterplot: Comparing two numeric Values</p>
+</li>
+</ul>
+<h4 id="lab"><strong>Lab</strong></h4>
+<p>Total Sum of Revenue for August: 470.5</p>
+<p>Hottest Saturday in July: 102.9</p>
+<p>Lowest Number of Flyers distributed in a day during November: 26</p>
+<p>Most flyers distributed: Wednesday</p>
+<p>Least Flyers distributed: Saturday</p>
+<p>Temperature vs. Rainfall: As rainfall increases, log temperature decreases</p>
+<p>Date vs. tr: As date goes to the mid-yer, temp increases and rainfall decreases</p>
+<h2 id="module-3-getting-started-with-statistics">Module 3: Getting Started with Statistics<a class="anchor" href="#module-3-getting-started-with-statistics">#</a></h2>
+<h3 id="measuring-central-tendency"><strong>Measuring Central Tendency</strong><a class="anchor" href="#measuring-central-tendency">#</a></h3>
+<ul>
+<li>
+<p>Understand the common descriptive statistics</p>
+</li>
+<li>
+<p>Mean: sum / n</p>
+</li>
+<li>
+<p>Median: The middle term</p>
+</li>
+<li>
+<p>Mode: The most occurring data</p>
+</li>
+</ul>
+<h3 id="visualizing-data"><strong>Visualizing Data</strong><a class="anchor" href="#visualizing-data">#</a></h3>
+<ul>
+<li>
+<p>Histogram: Portrays the data in frequency</p>
+</li>
+<li>
+<p>Box and whiskers chart</p>
+</li>
+</ul>
+<p>Measuring Variance</p>
+<ul>
+<li>
+<p>Variance: Sum of the squared differences between each value and the mean / the number of observations</p>
+</li>
+<li>
+<p>var.p(range)</p>
+</li>
+<li>
+<p>var.s(range): variance of a sample</p>
+</li>
+<li>
+<p>Standard Deviation: Square root of the variance</p>
+</li>
+<li>
+<p>Stdev.s - standard deviation of a sample (The higher the standard deviation, the more variance)</p>
+</li>
+<li>
+<p>1 standard deviation: 68.25%</p>
+</li>
+<li>
+<p>2 standard deviation: 95.45%</p>
+</li>
+<li>
+<p>3 standard deviation: 99.73%</p>
+</li>
+</ul>
+<p>Need to know the mean and the standard deviation.</p>
+<h3 id="skewed-distributions"><strong>Skewed Distributions</strong><a class="anchor" href="#skewed-distributions">#</a></h3>
+<ul>
+<li>
+<p>Where most of the data is centered</p>
+</li>
+<li>
+<p>Mean is higher or lower than median in the direction of the skewness</p>
+</li>
+</ul>
+<p>Working with Samples</p>
+<ul>
+<li>
+<p>Generally work with samples of data vs. population</p>
+</li>
+<li>
+<p>How to make sure the samples are representative of the population?</p>
+</li>
+<li>
+<p>Take the largest sample possible</p>
+</li>
+<li>
+<p>Take a lot of random samples (The Central Limit Theorem, it will make a normal distribution and the mean of the sample mean will be equal to the mean of the population)</p>
+</li>
+</ul>
+<h3 id="correlation"><strong>Correlation</strong><a class="anchor" href="#correlation">#</a></h3>
+<ul>
+<li>
+<p>Quantifying relation?</p>
+</li>
+<li>
+<p>COREL(range_x, range_y)</p>
+</li>
+<li>
+<p>+1 +ve : 0 : -1 -ve correlation</p>
+</li>
+</ul>
+<h3 id="hypothesis-testing"><strong>Hypothesis Testing</strong><a class="anchor" href="#hypothesis-testing">#</a></h3>
+<ul>
+<li>
+<p>Null Hypothesis:</p>
+</li>
+<li>
+<p>H1 Mean for hot sales &gt; mean sales for population</p>
+</li>
+<li>
+<p>Significance Level: 0.05</p>
+</li>
+<li>
+<p>z-test: if we know the standard deviation of the population</p>
+</li>
+<li>
+<p>t-test: returns the p-value</p>
+</li>
+<li>
+<p>if p-value is smaller than significance level -&gt; reject null hypothesis</p>
+</li>
+<li>
+<p>p-value represents the probability of getting the mean value purely by random chance</p>
+</li>
+</ul>
+<p>Mean of the temperature sampling dist: 60.39628</p>
+<p>Correlation between rainfall and sales: -.90921 / indicates that there is a inverse correlation)</p>
+<p>Cannot reject the null hypothesis as p-value 0.935 &gt; 0.05</p>
+<h2 id="module-4-machine-learning-basics">Module 4: Machine Learning Basics<a class="anchor" href="#module-4-machine-learning-basics">#</a></h2>
+<ul>
+<li>
+<p>Need a way to train a computer to perform calculations</p>
+</li>
+<li>
+<p>x → values that we have</p>
+</li>
+<li>
+<p>y → values that we are trying to predict</p>
+</li>
+</ul>
+<h3 id="types-of-machine-learning"><strong>Types of Machine Learning</strong><a class="anchor" href="#types-of-machine-learning">#</a></h3>
+<p>Supervised</p>
+<ul>
+<li>
+<p>Start with observations with known values (labels)</p>
+</li>
+<li>
+<p>Use a machine learning algorithm to fit a label</p>
+</li>
+<li>
+<p>We compare the value predicted to the actual value that we had in the first place</p>
+</li>
+<li>
+<p>Add unknown values to make predictions about new values</p>
+</li>
+</ul>
+<p>Unsupervised</p>
+<ul>
+<li>
+<p>Don’t have a known label in the training data set</p>
+</li>
+<li>
+<p>Each new observation is assigned to a cluster of observations with similar characteristics</p>
+</li>
+</ul>
+<p>Regression</p>
+<ul>
+<li>
+<p>RMSE (Root Mean Squared Error): Measure of the standard deviation</p>
+</li>
+<li>
+<p>MAE (Mean Absolute Error): Average of all the model errors</p>
+</li>
+<li>
+<p>Relative absolute error: MAE relative to the mean value of the label (0, 1) (evaluate performance)</p>
+</li>
+<li>
+<p>Relative Squared Error: RMSE divided by the sum of the squares of the label</p>
+</li>
+<li>
+<p>R-squared: Coefficient of determination (R-squared of the model, represents the predictive power of the model as a value between 0 and 1) 1 is perfect</p>
+</li>
+</ul>
+<p>Classification</p>
+<ul>
+<li>
+<p>Which class or category something belongs to</p>
+</li>
+<li>
+<p>Binary classification (T or F)</p>
+</li>
+<li>
+<p>False Positives / True Negative  : If the model predicts 0 or 1 but the actual label is the opposite</p>
+</li>
+</ul>
+<h3 id="confusion-matrix-calculating-performance-metrics-for-a-classifier">Confusion Matrix: Calculating performance metrics for a classifier<a class="anchor" href="#confusion-matrix-calculating-performance-metrics-for-a-classifier">#</a></h3>
+<ul>
+<li>
+<p>Accuracy is not useful for a measure of model’s performance</p>
+</li>
+<li>
+<p>Precision: The fraction of cases that are classified as positive that are actually positive.</p>
+</li>
+<li>
+<p>Recall (true positive rate) : The number of true positives / combines true positives and false negatives</p>
+</li>
+</ul>
+<p>Reciever Operating Characteristic (ROC):</p>
+<ul>
+<li>Area under the AUC is an indication of how well the model predicts (0, 0.5 is guessing, 1 is perfect)</li>
+</ul>
+<p>Clustering (Unsupervised)</p>
+<ul>
+<li>
+<p>K-means clustering</p>
+</li>
+<li>
+<p>Plot the data in a n-dimensional space (numeric values)</p>
+</li>
+<li>
+<p>Decide how many clusters you want to create</p>
+</li>
+<li>
+<p>Randomize the centroid</p>
+</li>
+<li>
+<p>Reposition the centroid</p>
+</li>
+<li>
+<p>Reallocate to the base of the centroid</p>
+</li>
+</ul>
+
+
+              
+          </article>
+          
+
+<ul class="tags__list">
+    
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/data-science/">data-science</a>
+    </li>
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/machine-learning/">machine-learning</a>
+    </li></ul>
+
+ <div class="pagination">
+  
+    <a class="pagination__item" href="https://swopnil.com/blog/us-china-ai-relations/">
+        <span class="pagination__label">Previous Post</span>
+        <span class="pagination__title">The United States and China in the AI Economy</span>
+    </a>
+  
+
+  
+    <a class="pagination__item" href="https://swopnil.com/blog/disability-unemployment-us-ada/">
+      <span class="pagination__label">Next Post</span>
+      <span class="pagination__title" >Disability Underemployment in the United States: A Product of Structural Impairments</a>
+    </a>
+  
+</div>
+
+          
+          <footer class="post__footer">
+            
+
+
+<div class="social-icons">
+  
+     
+    
+      <a class="social-icons__link" title="LinkedIn"
+         href="https://linkedin.com/in/swopnilnep"
+         target="_blank" rel="noopener">
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/linkedin.svg')"></div>
+      </a>
+    
+  
+     
+    
+      <a class="social-icons__link" title="GitHub"
+         href="https://github.com/swopnilnep"
+         target="_blank" rel="noopener">
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/github.svg')"></div>
+      </a>
+    
+  
+     
+    
+      <a class="social-icons__link" title="Twitter"
+         href="https://twitter.com/swopnilnep"
+         target="_blank" rel="noopener">
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/twitter.svg')"></div>
+      </a>
+    
+  
+     
+    
+     
+</div>
+            <p>© Swopnil Shrestha 2021</p>
+          </footer>
+          </div>
+      </div>
+      
+      <div class="toc-container">
+           <div class="toc-post-title">Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)</div> 
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#module-1-an-introduction-to-data">Module 1: An Introduction to Data</a>
+      <ul>
+        <li><a href="#why-do-you-like-being-a-data-scientist"><strong>Why do you like being a data scientist?</strong></a></li>
+        <li><a href="#11-getting-started-with-data"><strong>1.1 Getting Started with Data</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#module-2-data-analysis-fundamentals">Module 2: Data Analysis Fundamentals</a>
+      <ul>
+        <li><a href="#21-aggregating-data"><strong>2.1 Aggregating Data</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#module-3-getting-started-with-statistics">Module 3: Getting Started with Statistics</a>
+      <ul>
+        <li><a href="#measuring-central-tendency"><strong>Measuring Central Tendency</strong></a></li>
+        <li><a href="#visualizing-data"><strong>Visualizing Data</strong></a></li>
+        <li><a href="#skewed-distributions"><strong>Skewed Distributions</strong></a></li>
+        <li><a href="#correlation"><strong>Correlation</strong></a></li>
+        <li><a href="#hypothesis-testing"><strong>Hypothesis Testing</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#module-4-machine-learning-basics">Module 4: Machine Learning Basics</a>
+      <ul>
+        <li><a href="#types-of-machine-learning"><strong>Types of Machine Learning</strong></a></li>
+        <li><a href="#confusion-matrix-calculating-performance-metrics-for-a-classifier">Confusion Matrix: Calculating performance metrics for a classifier</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+    
+
+  </main>
+
+   
+
+  
+  <script src="/js/index.min.575dda8d49ee02639942c63564273e6da972ab531dda26a08800bdcb477cbd7f.js" crossorigin="anonymous"></script>
+  
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"
+    data-autoloader-path="https://unpkg.com/prismjs@1.20.0/components/"></script>
+
+  
+    <script src="/js/table-of-contents.js"></script>
+  
+
+
+</body>
+
+</html>

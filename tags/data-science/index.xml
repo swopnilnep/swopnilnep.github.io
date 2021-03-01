@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>data-science on Swopnil Shrestha | Software Engineer</title>
+    <link>https://swopnil.com/tags/data-science/</link>
+    <description>Recent content in data-science on Swopnil Shrestha | Software Engineer</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Swopnil Shrestha {year}</copyright>
+    <lastBuildDate>Tue, 16 Jun 2020 02:40:57 -0500</lastBuildDate><atom:link href="https://swopnil.com/tags/data-science/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Microsoft DAT101x Notes (Machine Learning Fundamentals with Azure, Excel)</title>
+      <link>https://swopnil.com/blog/microsoft-dat101x-notes/</link>
+      <pubDate>Tue, 16 Jun 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnil.com/blog/microsoft-dat101x-notes/</guid>
+      <description>In summer of 2018, I took a short module from Microsoft on Coursera, called DAT101x. The course was an Introduction to the fundamental concepts in Data Science with a brief preview of some ideas in Machine Learning, such as linear regression.
+In addition to teaching Data Science Fundamentals, the course also introduced various ways to do Data Science in Microsoft products such as Excel or Azure Data Science Studio.
+I found it a great course for both reasons.</description>
+    </item>
+    
+  </channel>
+</rss>
