@@ -31,6 +31,6 @@ git commit -m "[Automated Commit]:${cid}"
 
 echo "======= Step 3: Pushing to Hugo Repository ======="
 
-git push origin master
+git push origin deploy
 
 echo "======= Deployment Complete! ======="

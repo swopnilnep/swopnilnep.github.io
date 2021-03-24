@@ -32,7 +32,7 @@
   
   {{ range (slice $base_styles_opts $custom_styles_opts) }}
     {{ $style := resources.Get .src | resources.ExecuteAsTemplate .dest $current_page | toCSS | minify | fingerprint }}
-    <link type="text/css" rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}"/>
+    <link type="text/css" rel="stylesheet" href="{{ $style.RelPermalink }}"/>
   {{ end }}
   
   {{ range .AlternativeOutputFormats }} 
@@ -58,7 +58,7 @@
   {{ block "footer" . }} {{ end }}
 
   {{ $script := resources.Get "js/index.js" | minify | fingerprint }}
-  <script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity | safeHTMLAttr }}" crossorigin="anonymous"></script>
+  <script src="{{ $script.RelPermalink }}" crossorigin="anonymous"></script>
   {{ block "scripts" . }} {{ end }}
 </body>
 
