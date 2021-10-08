@@ -2,10 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Swopnil Shrestha | Software Engineer</title>
-    <link>https://swopnil.com/categories/</link>
+    <link>//swopnil.com/categories/</link>
     <description>Recent content in Categories on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© Swopnil Shrestha {year}</copyright><atom:link href="https://swopnil.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>© Swopnil Shrestha {year}</copyright><atom:link href="//swopnil.com/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

@@ -2,50 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://swopnil.com/</loc>
+    <loc>//swopnil.com/</loc>
     <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/</loc>
+    <loc>//swopnil.com/blog/</loc>
     <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/tags/machine-learning/</loc>
+    <loc>//swopnil.com/tags/machine-learning/</loc>
     <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/tags/python/</loc>
+    <loc>//swopnil.com/tags/python/</loc>
     <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/tags/</loc>
+    <loc>//swopnil.com/tags/</loc>
     <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/tensorflow-introduction-to-machine-learning/</loc>
+    <loc>//swopnil.com/blog/tensorflow-introduction-to-machine-learning/</loc>
     <lastmod>2020-12-25T22:54:18-06:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/getting-started-with-hugo-sites/</loc>
+    <loc>//swopnil.com/blog/getting-started-with-hugo-sites/</loc>
     <lastmod>2020-10-16T02:40:57-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/tags/software-engineering/</loc>
+    <loc>//swopnil.com/tags/software-engineering/</loc>
     <lastmod>2020-10-16T02:40:57-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/disability-unemployment-us-ada/</loc>
+    <loc>//swopnil.com/blog/disability-unemployment-us-ada/</loc>
     <lastmod>2020-10-03T02:08:54-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/tags/economics/</loc>
+    <loc>//swopnil.com/tags/economics/</loc>
     <lastmod>2020-10-03T02:08:54-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/tags/data-science/</loc>
+    <loc>//swopnil.com/tags/data-science/</loc>
     <lastmod>2020-06-16T02:40:57-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/microsoft-dat101x-notes/</loc>
+    <loc>//swopnil.com/blog/microsoft-dat101x-notes/</loc>
     <lastmod>2020-06-16T02:40:57-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/us-china-ai-relations/</loc>
+    <loc>//swopnil.com/blog/us-china-ai-relations/</loc>
     <lastmod>2019-09-10T12:27:37-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/blog/welcome/</loc>
+    <loc>//swopnil.com/blog/welcome/</loc>
     <lastmod>2019-04-01T00:10:20-05:00</lastmod>
   </url><url>
-    <loc>https://swopnil.com/categories/</loc>
+    <loc>//swopnil.com/categories/</loc>
   </url><url>
-    <loc>https://swopnil.com/work/</loc>
+    <loc>//swopnil.com/work/</loc>
   </url>
 </urlset>
