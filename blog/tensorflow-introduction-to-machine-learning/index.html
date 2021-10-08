@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <title>TensorFlow: Introduction to Machine Learning | Swopnil Shrestha | Software Engineer</title>
+
+  <meta charset="UTF-8">
+  <meta name="language" content="en">
+  <meta name="description" content="A summary of Google&#39;s Introduction to Machine Learning Crash Course">
+  <meta name="keywords" content="machine-learning , TensorFlow , Python">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="TensorFlow: Introduction to Machine Learning" />
+  <meta name="twitter:description" content="A summary of Google&amp;#39;s Introduction to Machine Learning Crash Course"/>
+  <meta name="twitter:site" content="https://twitter.com/swopnilnep" />
+  <meta name="twitter:creator" content="https://twitter.com/swopnilnep" />
+  
+
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+
+
+  
+  
+    
+ 
+  
+  
+  
+  
+  
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/post.min.c3e217b84c00a1ed535efac5536ed3607f886609333f99e716fd1aa58c51a0f8.css" integrity="sha256-w&#43;IXuEwAoe1TXvrFU27TYH&#43;IZgkzP5nnFv0apYxRoPg="/>
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/custom.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css" integrity="sha256-47DEQpj8HBSa&#43;/TImW&#43;5JCeuQeRkm5NMpJWZG3hSuFU="/>
+  
+  
+   
+   
+    
+
+<script type="application/ld+json">
+  
+    {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/swopnil.com"
+      },
+      "articleSection" : "blog",
+      "name" : "TensorFlow: Introduction to Machine Learning",
+      "headline" : "TensorFlow: Introduction to Machine Learning",
+      "description" : "A summary of Google\u0027s Introduction to Machine Learning Crash Course",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "2020",
+      "datePublished": "2020-12-25 22:54:18 -0600 CST",
+      "dateModified" : "2020-12-25 22:54:18 -0600 CST",
+      "url" : "https:\/\/swopnil.com\/blog\/tensorflow-introduction-to-machine-learning\/",
+      "wordCount" : "2127",
+      "keywords" : ["machine-learning", "TensorFlow", "Python", "Blog"]
+    }
+  
+  </script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131922110-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</head>
+
+<body>
+  <div class="burger__container">
+  <div class="burger" aria-controls="navigation" aria-label="Menu">
+    <div class="burger__meat burger__meat--1"></div>
+    <div class="burger__meat burger__meat--2"></div>
+    <div class="burger__meat burger__meat--3"></div>
+  </div>
+</div>
+ 
+
+  <nav class="nav" id="navigation">
+  <ul class="nav__list">
+    
+    
+      <li>
+        <a  href="/">about</a>
+      </li>
+    
+      <li>
+        <a  class="active"
+         href="/blog">blog</a>
+      </li>
+    
+      <li>
+        <a  href="/work">work</a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+  <main>
+    
+    
+
+    <div class="flex-wrapper">
+      <div class="post__container">
+        <div class="post">
+          <header class="post__header">
+            <h1 id="post__title">TensorFlow: Introduction to Machine Learning</h1>
+            <time datetime="2020-12-25 22:54:18 -0600 CST" class="post__date">Dec 25 2020</time> 
+          </header>
+          <article class="post__content">
+              
+<h2 id="about">About<a class="anchor" href="#about">#</a></h2>
+<p>The Introduction to Machine Learning Crash course, from Google which teaches Machine Learning Fundamentals using TensorFlow is a popular and brilliant way to begin Machine Learning. I took this self-paced over the time of a few weeks in 2018 and took some notes as I went.</p>
+<p>This blog post are my summary notes for that course. In addition to taking notes for the course, I also put together a playlist for all the videos of that course, for those who prefer to learn solely from YouTube.</p>
+<p>You can access the <a href="https://www.youtube.com/watch?v=0mK52UsOj-U&amp;list=PLoMysrWTTHoGOIxG7wi_D1J2a1nLBndZb" 
+  
+   target="_blank" rel="noreferrer noopener" 
+>playlist here</a>.</p>
+<p>Here is the first video from the course, which is trailer to what the course is about. Enjoy!</p>
+<br>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/0mK52UsOj-U" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<h2 id="10-supervised-ml--labels--features">1.0 Supervised ML / Labels / Features<a class="anchor" href="#10-supervised-ml--labels--features">#</a></h2>
+<ul>
+<li>What is a supervised ML?</li>
+<li>Creating models that combine inputs to produce useful predictions</li>
+<li>Never before seen data</li>
+<li>Label</li>
+<li>We are providing it with label (spam or not spam)</li>
+<li>It is what we are predicting (y variable in linear regression)</li>
+<li>Features</li>
+<li>Input variables (x in linear regression)</li>
+<li>Like the columns (email address, words in the email, time it was sent)</li>
+<li>What are labeled and unlabeled?</li>
+<li>Labeled contains both features and the label like (spam or not spam)</li>
+<li>Unlabeled contains features but not the label</li>
+<li>Unlabeled examples add new examples that humans haven&rsquo;t labeled</li>
+<li>Models</li>
+<li>Model defines the relationship between the features and the label</li>
+<li>Learning or training entails learning the relationship between the features and the label based on what the model is trying to predict</li>
+<li>Inference is applying the trained model to unlabeled examples (making predictions)</li>
+<li>Regression vs. Classification</li>
+<li>Regression: Predicts continuous values (more likely to work with numbers)</li>
+<li>Classification: Predicts discrete values (sort into categories)</li>
+</ul>
+<h2 id="20-descending-into-ml-linear-regression">2.0 Descending into ML: Linear Regression<a class="anchor" href="#20-descending-into-ml-linear-regression">#</a></h2>
+<ul>
+<li>It is like finding the slope of a line where</li>
+<li>y' = b + w1x1 where:</li>
+<li>y' - predicted label</li>
+<li>b - bias (y-intercept)</li>
+<li>w1 - weight of feature 1</li>
+<li>x1 - feature (input)</li>
+</ul>
+<h3 id="21-training-and-loss">2.1 Training and Loss<a class="anchor" href="#21-training-and-loss">#</a></h3>
+<ul>
+<li><strong>Empirical Risk Minimization</strong> is the process the machine learning model uses for training by examining many examples and attempting to find a model that minimizes loss</li>
+<li>Loss is a number predicting how bad the model&rsquo;s prediction was on a single example</li>
+<li>The squared loss is a popular loss function for measuring the accuracy of linear regression: (observation - prediction(<strong>x</strong>))2</li>
+<li>Mean Squared Error (MSE) - Sum up all the squared losses per example over the whole dataset / number of examples</li>
+</ul>
+<h2 id="30-reducing-loss-iterative-approach">3.0 Reducing Loss: Iterative Approach<a class="anchor" href="#30-reducing-loss-iterative-approach">#</a></h2>
+<ul>
+<li>Like the &ldquo;hot and cold&rdquo; kid&rsquo;s game for finding a hidden object</li>
+<li>The iterative process:</li>
+<li>Data comes in</li>
+<li>Make a prediction</li>
+<li>Calculate the squared loss (derivative of squared loss easy to compute)</li>
+<li>Compute the gradient of the loss function on the data</li>
+<li>We get a -ve or +ve gradient which tells us to update model parameter and get a new version of the model</li>
+<li>Repeat</li>
+<li>Rate depends on how big of a gap we decide to take</li>
+<li>Theory (math) tells us to compute the gradient over all examples in our dataset</li>
+<li>Empirically - Compute the gradient of the loss function over a single (stocastic gradient descent)</li>
+<li>Practically - Use a batch of gradient descents (mini-batch gradient descent)</li>
+</ul>
+<h3 id="31-gradient-descent">3.1 Gradient Descent<a class="anchor" href="#31-gradient-descent">#</a></h3>
+<ul>
+<li>Calculating the loss function for every value of w over a convex problem would be inefficient</li>
+<li>We start gradient descent by picking a starting value (random value or 0, doesn&rsquo;t matter too much)</li>
+<li>The gradient always points in the direction of the steepest increase in the loss function. The algorithm then takes a step in the direction of the negative gradient in order to reduce loss as quickly as possible.</li>
+<li>To take the next point, the gradient descent add a fraction of the gradient&rsquo;s magnitude to the starting point</li>
+<li>Then the gradient descent repeats this process getting closer to the minimum</li>
+</ul>
+<h3 id="32-learning-rate">3.2 Learning Rate<a class="anchor" href="#32-learning-rate">#</a></h3>
+<ul>
+<li>The gradients multiply the gradient by a scalar known as the <strong>learning rate</strong> (step size)</li>
+<li>Hyperparameters - values that are set before the machine learning takes place (programmers tweak), learning rate is a hyper parameter</li>
+<li>The value of the learning rate is related to how flat the function is, if the loss is small, then we can use a larger learning rate (small gradient / larger step size)</li>
+</ul>
+<h3 id="33stochastic-gradient-descent">3.3 Stochastic Gradient Descent<a class="anchor" href="#33stochastic-gradient-descent">#</a></h3>
+<ul>
+<li>Batch is the total number of examples you use to calculate the gradient in a single iteration</li>
+<li>With a larger batch, there is more redundant data as the batch size grows</li>
+<li>SGD only uses 1 example per iteration (very noisy, but works) | stochastic means random</li>
+<li>Mini-batch SGD is a middle, takes between 10 and 1,000 examples</li>
+</ul>
+<h1 id="40-tensorflow">4.0 TensorFlow</h1>
+<ul>
+<li>Graph based computational framework that have a lot of applications</li>
+<li>Estimators API - higher level API</li>
+<li>Lower level API (build models defining a series of mathematical operations)</li>
+<li>Higher Level API - Specify predefined architectures like linear regressors or neural networks</li>
+<li>TensorFlow consists of two components:</li>
+<li>Graph protocol buffer</li>
+<li>Runtime that executes the graph</li>
+<li>Like Python code and python interpreter, can run on multiple hardware platforms</li>
+<li>We should use the highest level of abstraction that solves the problem</li>
+</ul>
+<h4 id="411-steps">4.1.1 Steps</h4>
+<ul>
+<li>Define features and configure feature columns (store a description of the feature data)</li>
+<li>Define the target</li>
+<li>Configure the LinearRegressor</li>
+<li>Define the input function</li>
+<li>Pandas feature data to NumPy arrays</li>
+<li>TensorFlow Dataset API to construct a dataset object from the data, break our data into batches of batch_size</li>
+<li>Train the Model</li>
+<li>Evaluate the Model</li>
+</ul>
+<h4 id="412-hyperparameters">4.1.2 Hyperparameters</h4>
+<ul>
+<li>steps: total number of training iterations. One step calculates the loss from one batch and uses that to modify the model&rsquo;s weights once.</li>
+<li>batch size: the number of examples (randomized) for a single step. Ex. batch size for SGD is 1.</li>
+<li>total number of trained examples = batch size x steps</li>
+<li>periods: Controls the granularity of reporting. If periods is 7 and steps is 70, the exercise will output the loss value every 10 steps (7 times)</li>
+</ul>
+<h2 id="50-generalization">5.0 Generalization<a class="anchor" href="#50-generalization">#</a></h2>
+<ul>
+<li>Generalization of data</li>
+<li>Overfitting of data - When it fits better with one example but does not fit all</li>
+<li>Ocham&rsquo;s Razor - A model should be as simple as possible</li>
+<li>Test set methodology</li>
+<li>One one set of data and use a training set</li>
+<li>Use another set of data and use a test set</li>
+<li>Assumptions:</li>
+<li>We are drawing independently and identically</li>
+<li>Distribution is stationary</li>
+<li>From the same distribution</li>
+</ul>
+<h2 id="60-training-and-test-sets">6.0 Training and Test Sets<a class="anchor" href="#60-training-and-test-sets">#</a></h2>
+<ul>
+<li>Divide large dataset into two smaller sets (Randomization before splitting)</li>
+<li>Cross Validation (if small dataset)</li>
+<li>Do not train on your test data</li>
+</ul>
+<h2 id="70-validation">7.0 Validation<a class="anchor" href="#70-validation">#</a></h2>
+<ul>
+<li>Testing repetitively on the same dataset can lead to overfitting to that particular case</li>
+<li>Iterations by training on the training data and validating on the validation data</li>
+<li>Finally test on the test data</li>
+</ul>
+<h2 id="80-representation">8.0 Representation<a class="anchor" href="#80-representation">#</a></h2>
+<ul>
+<li>Feature Engineering (Process of extracting features from raw data)</li>
+<li>String value to feature value by one hot encoding</li>
+<li>Database records - does not come to us in the form of information</li>
+<li>Mapping Raw Data to Features:
+<ul>
+<li>Raw data: Data from an input source</li>
+<li>Feature Vector: Floating point values comprising the examples in the dataset</li>
+<li>Feature Engineering: Transforming raw data into a feature vector</li>
+</ul>
+</li>
+<li>Mapping Numeric Values
+<ul>
+<li>It is trivial to convert integers to features</li>
+</ul>
+</li>
+<li>Mapping Categorical Values
+<ul>
+<li>Strings are converted into numeric values</li>
+<li>OOV bucket (out of vocabulary bucket) consists of the values that are not in the vocabulary of strings</li>
+<li>One hot encoding extends to numeric data that you do not want to directly multiply by a weight (postal code)</li>
+</ul>
+</li>
+<li>Qualities of Good Features:
+<ul>
+<li>Should appear more than 5 or so times in a data set (ex. house_type)</li>
+<li>Should have a clear and obvious meaning</li>
+<li>Should not have noisy data</li>
+<li>Convert &ldquo;magic&rdquo; values into two features, (data_supplied, rating)</li>
+<li>Definition feature should not change over time</li>
+</ul>
+</li>
+<li>Cleaning Data
+<ul>
+<li>Scaling Feature Values
+<ul>
+<li><strong>Scaling</strong> is converting floating point feature values from their natural range (100 to 900) to (0 to 1)</li>
+<li>Helps gradient descent converge more quickly</li>
+<li>Every number becomes NaN</li>
+<li>Helps the model learn appropriate weights for each feature
+<ul>
+<li>Linearly map [min value, max value] to a scale such as [+1, -1]</li>
+<li>scaledvalue = (value - mean)/stdev</li>
+<li>Scaling with Z-Scores means that there will be values &gt; 3 &lt;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Handling Extreme Outliers:
+<ul>
+<li>Log Scaling: Still leaves a tail</li>
+<li>Clipping Features: All the features beyond a number become a number</li>
+</ul>
+</li>
+<li>Binning
+<ul>
+<li>For features that have no linear relationship with the data</li>
+<li>Binning by quantile removes the need for outliers</li>
+</ul>
+</li>
+<li>Scrubbing
+<ul>
+<li>Omitted Values: Person forgot to enter values</li>
+<li>Duplicated Values: Uploaded the two logs</li>
+<li>Bad Labels: A person labeled a picture of an oak tree as a maple</li>
+<li>Bad feature values: Extra digit or a thermometer was left out in the sun</li>
+<li>Use histograms, min and max, mean and median, standard deviation</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="90-feature-crosses">9.0 Feature Crosses<a class="anchor" href="#90-feature-crosses">#</a></h2>
+<ul>
+<li>A linear problem is where you can fit a line to differentiate spam from not spam (depending on the input variables)</li>
+<li>Define a synthetic feature (cross product)</li>
+<li>Feature Crosses:
+<ul>
+<li>Bedrooms x</li>
+<li>Linear learners scale to large datasets</li>
+</ul>
+</li>
+<li>Crossing One-Hot Vectors:
+<ul>
+<li>Linear learners scale well to massive dat</li>
+</ul>
+</li>
+<li>FTRL Optimization Algorithm
+<ul>
+<li>Benefits scaling the learning rate differently for different coefficients | scales the learning rate differently for different coefficients (can be useful if there are a lot of 0 values)</li>
+</ul>
+</li>
+</ul>
+<h2 id="100-regularization-for-simplicity">10.0 Regularization for Simplicity<a class="anchor" href="#100-regularization-for-simplicity">#</a></h2>
+<ul>
+<li>Minimizing Training Loss</li>
+<li>Regularization - Not trusting your examples too much</li>
+<li>Red line starts to go up (need to generalize on the test examples)</li>
+<li>Early Stopping (stopping before it starts to converge)</li>
+<li>Penalize the model complexity:
+<ul>
+<li>While we are training</li>
+<li>Empirical Risk Minimization: minimize(loss(data|model))</li>
+<li>Structural Risk Minimization: minimize(loss(data(model) + complexity(model))</li>
+</ul>
+</li>
+<li>Model Complexity
+<ul>
+<li>Model complexity as a function of the weights of all the features in the model</li>
+<li>Model complexity as a function of the total number of features with nonzero weights</li>
+</ul>
+</li>
+<li>We quantify complexity using the L2 Regularization formula</li>
+<li>L2 Regularization - Sum of the squared values of the weights</li>
+</ul>
+<h2 id="110-linear-regression">11.0 Linear Regression<a class="anchor" href="#110-linear-regression">#</a></h2>
+<ul>
+<li>Sometimes we might end up with a range beyond 0 and 1 (for probabilities) if we use Linear Regression</li>
+<li>Loss function and prediction method (never exceeds 0 or 1) Logistic Regression</li>
+<li>Classification Tasks, Probability etc</li>
+<li>Linear Model -&gt; Sigmoid</li>
+<li>Training using a log loss (entropy measure)</li>
+<li>As you get closer to the bars, the loss get higher quickly</li>
+<li>Because of the asymptote, we need to use regularization (L2 regularization)</li>
+<li>Efficient to train, fast, efficient to use</li>
+</ul>
+<h2 id="120-classification">12.0 Classification<a class="anchor" href="#120-classification">#</a></h2>
+<ul>
+<li>Is it spam or not spam?</li>
+<li>Making a classification threshold, evaluating classification performance is accuracy</li>
+<li>Accuracy breaks down if we have class imbalance</li>
+<li>True Positive, False Negative, True Negative, False Positive</li>
+<li>Precision - When the boy said wolf, how many times was he right?</li>
+<li>Recall - Of all, how many did he say wolf?</li>
+<li>Precision - Recall opposite</li>
+<li>What classification threshold are you using?
+<ul>
+<li>Across many different classification thresholds</li>
+<li>ROC curve (Receiver Operating Characteristics)</li>
+<li>Area under the ROC curve, When you pick a random positive and a random negative example, what is the probability that the model will get a higher score for the positive than the negative * The probability value is exctly the same probability for the prob under RC</li>
+<li>Prediction Bias - Sum of everything predicted / sum of everything observed</li>
+<li>Bias - Simplistic (Easy to fool) | Need to make zero bias</li>
+<li>Calibration Plot - Take groups of data, bucket and look at mean prediction and mean observation
+<ul>
+<li>Coin Flip will come up 1 or 0</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="130-regularization-for-sparsity">13.0 Regularization for Sparsity<a class="anchor" href="#130-regularization-for-sparsity">#</a></h2>
+<ul>
+<li>Feature crosses can cause problems</li>
+<li>Sparse features</li>
+<li>Words in a search query * Unique video that we have to look up</li>
+<li>Model size will take memory</li>
+<li>Noisy Coefficients - Lose them</li>
+<li>Regularize - Model Size, memory usage</li>
+<li>L0 regularization - Zero out weights (not convex, hard to optimize)</li>
+<li>L1 Regularization - Sum of the absolute value of the weights</li>
+<li>L2 Regularization - Makes the weights small but won&rsquo;t actually drive them to 0</li>
+</ul>
+<h2 id="140-neural-nets">14.0 Neural Nets<a class="anchor" href="#140-neural-nets">#</a></h2>
+<ul>
+<li>Learn the non-linearity themselves - Image, audio and video data</li>
+<li>Model with structure</li>
+<li>Linear Model - nonlinearity by additional layer (RELU, Sigmoid, Tanh)</li>
+<li>When training - non-convex optimization</li>
+<li>Backpropagation is a variant of gradient descent</li>
+</ul>
+<h2 id="150-training-neural-nets">15.0 Training Neural Nets<a class="anchor" href="#150-training-neural-nets">#</a></h2>
+<ul>
+<li>We need differentiable functions</li>
+<li>Gradients vanish (noise ratios)</li>
+<li>Gradients can explode (learning rates are too high)</li>
+<li>ReLus can die (if we end up at everything below 0)</li>
+<li>All of the inputs are on roughly the same scale</li>
+<li>Drop out regularization - p, remove the node on each gradient step</li>
+</ul>
+<h2 id="160-multi-class-neural-nets">16.0 Multi-Class Neural Nets<a class="anchor" href="#160-multi-class-neural-nets">#</a></h2>
+<ul>
+<li>Classification for binary class problems</li>
+<li>Pick a label out of a range of classes</li>
+<li>One vs. all multiclass classification</li>
+<li>If the neural nets belong to only one class, make the sum of the total outputs to 1 (using Softmax)</li>
+<li>Multilabel Classification problem - 3 different dogs, dog and a person (1 vs. all classification strategy) - using full Softmax which is expensive to train</li>
+<li>Candidate Sampling - Train the output nodes for the set that it belongs to</li>
+</ul>
+<h2 id="170-embeddings">17.0 Embeddings<a class="anchor" href="#170-embeddings">#</a></h2>
+<ul>
+<li>Collaborating Samples</li>
+<li>1-dimensional embedding</li>
+<li>Multi-dimensional embedding</li>
+</ul>
+
+
+              
+          </article>
+          
+
+<ul class="tags__list">
+    
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/machine-learning/">machine-learning</a>
+    </li>
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/python/">python</a>
+    </li></ul>
+
+ <div class="pagination">
+  
+    <a class="pagination__item" href="https://swopnil.com/blog/getting-started-with-hugo-sites/">
+        <span class="pagination__label">Previous Post</span>
+        <span class="pagination__title">Setting Up: Getting Started with Hugo Sites</span>
+    </a>
+  
+
+  
+</div>
+
+          
+          <footer class="post__footer">
+            
+
+
+<div class="social-icons">
+  
+     
+    
+      <a
+        class="social-icons__link"
+        title="LinkedIn"
+        href="https://linkedin.com/in/swopnilnep"
+        target="_blank"
+        rel="me noopener"
+      >
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/linkedin.svg')"></div>
+      </a>
+    
+  
+     
+    
+      <a
+        class="social-icons__link"
+        title="GitHub"
+        href="https://github.com/swopnilnep"
+        target="_blank"
+        rel="me noopener"
+      >
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/github.svg')"></div>
+      </a>
+    
+  
+     
+    
+      <a
+        class="social-icons__link"
+        title="Twitter"
+        href="https://twitter.com/swopnilnep"
+        target="_blank"
+        rel="me noopener"
+      >
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/twitter.svg')"></div>
+      </a>
+    
+  
+     
+    
+     
+</div>
+
+            <p>© Swopnil Shrestha 2021</p>
+          </footer>
+          </div>
+      </div>
+      
+      <div class="toc-container">
+           <div class="toc-post-title">TensorFlow: Introduction to Machine Learning</div> 
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#10-supervised-ml--labels--features">1.0 Supervised ML / Labels / Features</a></li>
+    <li><a href="#20-descending-into-ml-linear-regression">2.0 Descending into ML: Linear Regression</a>
+      <ul>
+        <li><a href="#21-training-and-loss">2.1 Training and Loss</a></li>
+      </ul>
+    </li>
+    <li><a href="#30-reducing-loss-iterative-approach">3.0 Reducing Loss: Iterative Approach</a>
+      <ul>
+        <li><a href="#31-gradient-descent">3.1 Gradient Descent</a></li>
+        <li><a href="#32-learning-rate">3.2 Learning Rate</a></li>
+        <li><a href="#33stochastic-gradient-descent">3.3 Stochastic Gradient Descent</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#50-generalization">5.0 Generalization</a></li>
+    <li><a href="#60-training-and-test-sets">6.0 Training and Test Sets</a></li>
+    <li><a href="#70-validation">7.0 Validation</a></li>
+    <li><a href="#80-representation">8.0 Representation</a></li>
+    <li><a href="#90-feature-crosses">9.0 Feature Crosses</a></li>
+    <li><a href="#100-regularization-for-simplicity">10.0 Regularization for Simplicity</a></li>
+    <li><a href="#110-linear-regression">11.0 Linear Regression</a></li>
+    <li><a href="#120-classification">12.0 Classification</a></li>
+    <li><a href="#130-regularization-for-sparsity">13.0 Regularization for Sparsity</a></li>
+    <li><a href="#140-neural-nets">14.0 Neural Nets</a></li>
+    <li><a href="#150-training-neural-nets">15.0 Training Neural Nets</a></li>
+    <li><a href="#160-multi-class-neural-nets">16.0 Multi-Class Neural Nets</a></li>
+    <li><a href="#170-embeddings">17.0 Embeddings</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+    
+
+  </main>
+
+   
+
+  
+  <script src="/js/index.min.575dda8d49ee02639942c63564273e6da972ab531dda26a08800bdcb477cbd7f.js" integrity="sha256-V13ajUnuAmOZQsY1ZCc&#43;balyq1Md2iagiAC9y0d8vX8=" crossorigin="anonymous"></script>
+  
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"
+    data-autoloader-path="https://unpkg.com/prismjs@1.20.0/components/"></script>
+
+  
+    <script src="/js/table-of-contents.js"></script>
+  
+
+
+</body>
+
+</html>
