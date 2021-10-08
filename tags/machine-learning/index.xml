@@ -2,28 +2,28 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>machine-learning on Swopnil Shrestha | Software Engineer</title>
-    <link>//swopnil.com/tags/machine-learning/</link>
+    <link>/tags/machine-learning/</link>
     <description>Recent content in machine-learning on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="//swopnil.com/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>TensorFlow: Introduction to Machine Learning</title>
-      <link>//swopnil.com/blog/tensorflow-introduction-to-machine-learning/</link>
+      <link>/blog/tensorflow-introduction-to-machine-learning/</link>
       <pubDate>Fri, 25 Dec 2020 22:54:18 -0600</pubDate>
       
-      <guid>//swopnil.com/blog/tensorflow-introduction-to-machine-learning/</guid>
+      <guid>/blog/tensorflow-introduction-to-machine-learning/</guid>
       <description>About The Introduction to Machine Learning Crash course, from Google which teaches Machine Learning Fundamentals using TensorFlow is a popular and brilliant way to begin Machine Learning. I took this self-paced over the time of a few weeks in 2018 and took some notes as I went.
 This blog post are my summary notes for that course. In addition to taking notes for the course, I also put together a playlist for all the videos of that course, for those who prefer to learn solely from YouTube.</description>
     </item>
     
     <item>
       <title>Microsoft&#39;s Introduction to Data Science</title>
-      <link>//swopnil.com/blog/microsoft-dat101x-notes/</link>
+      <link>/blog/microsoft-dat101x-notes/</link>
       <pubDate>Tue, 16 Jun 2020 02:40:57 -0500</pubDate>
       
-      <guid>//swopnil.com/blog/microsoft-dat101x-notes/</guid>
+      <guid>/blog/microsoft-dat101x-notes/</guid>
       <description>In summer of 2018, I took a short module from Microsoft on Coursera, called DAT101x. The course was an Introduction to the fundamental concepts in Data Science with a brief preview of some ideas in Machine Learning, such as linear regression.
 In addition to teaching Data Science Fundamentals, the course also introduced various ways to do Data Science in Microsoft products such as Excel or Azure Data Science Studio.
 I found it a great course for both reasons.</description>
