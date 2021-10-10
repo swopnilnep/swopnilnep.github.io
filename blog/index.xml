@@ -2,28 +2,28 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blogs on Swopnil Shrestha | Software Engineer</title>
-    <link>http://swopnil.com/blog/</link>
+    <link>https://swopnil.com/blog/</link>
     <description>Recent content in Blogs on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="http://swopnil.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="https://swopnil.com/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>TensorFlow: Introduction to Machine Learning</title>
-      <link>http://swopnil.com/blog/tensorflow-introduction-to-machine-learning/</link>
+      <link>https://swopnil.com/blog/tensorflow-introduction-to-machine-learning/</link>
       <pubDate>Fri, 25 Dec 2020 22:54:18 -0600</pubDate>
       
-      <guid>http://swopnil.com/blog/tensorflow-introduction-to-machine-learning/</guid>
+      <guid>https://swopnil.com/blog/tensorflow-introduction-to-machine-learning/</guid>
       <description>About The Introduction to Machine Learning Crash course, from Google which teaches Machine Learning Fundamentals using TensorFlow is a popular and brilliant way to begin Machine Learning. I took this self-paced over the time of a few weeks in 2018 and took some notes as I went.
 This blog post are my summary notes for that course. In addition to taking notes for the course, I also put together a playlist for all the videos of that course, for those who prefer to learn solely from YouTube.</description>
     </item>
     
     <item>
       <title>Setting Up: Getting Started with Hugo Sites</title>
-      <link>http://swopnil.com/blog/getting-started-with-hugo-sites/</link>
+      <link>https://swopnil.com/blog/getting-started-with-hugo-sites/</link>
       <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
       
-      <guid>http://swopnil.com/blog/getting-started-with-hugo-sites/</guid>
+      <guid>https://swopnil.com/blog/getting-started-with-hugo-sites/</guid>
       <description>Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;ldquo;Building a Personal Static Website&amp;rdquo; workshop on 2020, Oct 18th.
 If you have any questions or trouble with this tutorial, you can message the Luther ACM Slack channel.
 Philosophy Hugo is a fast, flexible static site generator, one of the most popular open source generators among the numerous static site generators available.</description>
@@ -31,19 +31,19 @@ Philosophy Hugo is a fast, flexible static site generator, one of the most popul
     
     <item>
       <title>Disability Underemployment in the United States: A Product of Structural Impairments</title>
-      <link>http://swopnil.com/blog/disability-unemployment-us-ada/</link>
+      <link>https://swopnil.com/blog/disability-unemployment-us-ada/</link>
       <pubDate>Sat, 03 Oct 2020 02:08:54 -0500</pubDate>
       
-      <guid>http://swopnil.com/blog/disability-unemployment-us-ada/</guid>
+      <guid>https://swopnil.com/blog/disability-unemployment-us-ada/</guid>
       <description>Introduction Issues of employment are of the utmost importance to disabled individuals in the United States as it determines the quality of life they will have. Whether a disabled individual is able to support a family and pursue their own dreams or lives a meager life in poverty often correlates with their place on the economic ladder. How will the disabled individual provide for their family? How will they afford to buy a house or purchase goods that they require for self-sustenance?</description>
     </item>
     
     <item>
       <title>Microsoft&#39;s Introduction to Data Science</title>
-      <link>http://swopnil.com/blog/microsoft-dat101x-notes/</link>
+      <link>https://swopnil.com/blog/microsoft-dat101x-notes/</link>
       <pubDate>Tue, 16 Jun 2020 02:40:57 -0500</pubDate>
       
-      <guid>http://swopnil.com/blog/microsoft-dat101x-notes/</guid>
+      <guid>https://swopnil.com/blog/microsoft-dat101x-notes/</guid>
       <description>In summer of 2018, I took a short module from Microsoft on Coursera, called DAT101x. The course was an Introduction to the fundamental concepts in Data Science with a brief preview of some ideas in Machine Learning, such as linear regression.
 In addition to teaching Data Science Fundamentals, the course also introduced various ways to do Data Science in Microsoft products such as Excel or Azure Data Science Studio.
 I found it a great course for both reasons.</description>
@@ -51,20 +51,20 @@ I found it a great course for both reasons.</description>
     
     <item>
       <title>The United States and China in the AI Economy</title>
-      <link>http://swopnil.com/blog/us-china-ai-relations/</link>
+      <link>https://swopnil.com/blog/us-china-ai-relations/</link>
       <pubDate>Tue, 10 Sep 2019 12:27:37 -0500</pubDate>
       
-      <guid>http://swopnil.com/blog/us-china-ai-relations/</guid>
+      <guid>https://swopnil.com/blog/us-china-ai-relations/</guid>
       <description>人工智能经济中的中国和美国
 Current State of AI in the World (世界AI的现状) Artificial Intelligence (AI) was founded on the premise that computational intelligence could match or surpass the intelligence of a human. Also called 人工智能 in simplified Chinese, this term describes machines that are capable doing complex and high-level jobs that only humans are currently capable of doing, having cognitive functions with the human mind like learning and function. Since its conception in 1956 as an academic discipline, AI has already been able to impact our lives in a massive way, revolutionizing many aspects of industry with tasks such as text, speech and image recognition, autonomous driving, content delivery networks music and art.</description>
     </item>
     
     <item>
       <title>Welcome</title>
-      <link>http://swopnil.com/blog/welcome/</link>
+      <link>https://swopnil.com/blog/welcome/</link>
       <pubDate>Mon, 01 Apr 2019 00:10:20 -0500</pubDate>
       
-      <guid>http://swopnil.com/blog/welcome/</guid>
+      <guid>https://swopnil.com/blog/welcome/</guid>
       <description>&amp;quot;Hello, World!&amp;quot;
 This is the obligatory first post. Welcome to my blog.</description>
     </item>
