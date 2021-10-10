@@ -2,7 +2,7 @@ theme = "hugo-theme-codex"
 
 title = "Swopnil Shrestha | Software Engineer"
 languageCode = "en-us"
-baseURL = "http://swopnil.com"
+baseURL = "https://swopnil.com"
 copyright = "© Swopnil Shrestha {year}"
 
 # Add your Google Analytics identifier: UA-XXXXXXXX-X

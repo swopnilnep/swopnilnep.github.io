@@ -9,11 +9,10 @@ math: false
 toc: false
 ---
 
-I have worked at a few places including WiseYak, CloudFactory and Venio Systems. I was also the President of the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a> until Jan 2021. 
+I have worked at a few places including Amazon, CloudFactory, and several startups.
 
-Currently, I am looking for full-stack Software Engineering positions in a position that will challenge me and enable me to grow as an engineer. 
+I graduated with Computer Science major from Luther College in 2021. and also ran the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a> chapter while in college. 
 
-Looking for my resume? <a style="text-decoration: none;" href="https://swopnil.com/resume/SwopnilShrestha-Resume.pdf" target="_blank"> <code> 📄 SwopnilShrestha-Resume.pdf</code></a>
 ## Principles 
 
 I believe that an organization should be guided by a set of core values that each member of that organization can look towards to find guidance. Here are some values that resonate with me:
@@ -30,7 +29,30 @@ I believe that an organization should be guided by a set of core values that eac
 
 All of my work at various companies related to software engineering.
 
-#### Software Engineering Intern
+
+### Software Development Engineer
+**Amazon**
+<br>*Sep 2021 - Present • Seattle, WA*
+
+Full-Stack Engineer for Seller Fulfillment Services at Fulfillment by Amazon
+
+Read More:
+* [Fulfillment by Amazon](https://sell.amazon.com/fulfillment-by-amazon)
+
+---
+
+### Software Engineer
+**Stealth Startup**
+<br>*March 2021 - Sep 2021 • Austin, TX (Remote)*
+
+Helped build a Conversational E-Commerce Platform for an early-stage startup as a Full-Stack Engineer.
+
+Read More:
+* [Research: Conversational E-Commerce Market in the US / China](https://swopnil.notion.site/Conversational-Commerce-Market-in-the-US-c07f4069f242483daab79b47b0818b8d)
+
+---
+
+### Software Engineering Intern
 **WiseYak, Inc.**
 <br>*May 2020 - Aug 2020 • Bellevue, WA (Remote)*
 
@@ -42,7 +64,7 @@ Read more:
 * [Blog Post]()
 
 ---
-#### President
+### President
 **Association for Computing Machinery at Luther College**
 <br>*Jan 2020 - Jan 2021 • Decorah, IA*
 
@@ -53,7 +75,7 @@ Read more:
 * [Organization Website](https://luthercss.github.io/)
 
 ---
-#### Software Engineering Intern
+### Software Engineering Intern
 **Venio Systems**
 <br>*May 2019 - Aug 2019 • Fairfax, VA*
 
@@ -64,17 +86,18 @@ Read more:
 * [GitHub: Viz Email Analytics](https://github.com/swopnilnep/viz-email-analytics)
 
 ---
-#### Data Engineering Intern
+### Data Engineering Intern
 **CloudFactory**
 <br>*May 2018 - Aug 2018 • Kathmandu*
 
 Engineered a web tool that visualized real-time performance measures (throughput, accuracy) for 2000+ cloud workers. Conducted study of the effectiveness of the autocorrect functionality amongst workers. Presented findings to engineering and sales teams and iterated upon feedback.
 
 Read more:
+* [CloudFactory Use Cases](https://www.cloudfactory.com/use-cases)
 * [CloudFactory Blog](https://blog.cloudfactory.com/)
 
 ---
-#### Business Development Intern
+### Business Development Intern
 **Portal Bikes**
 <br>*Jun 2016 - Aug 2017 • Kathmandu*
 
