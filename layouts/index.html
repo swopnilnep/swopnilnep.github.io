@@ -1,0 +1,35 @@
+{{ define "styles" }}
+    {{ $.Scratch.Set "style_opts" (dict "src" "scss/pages/about.scss" "dest" "css/about.css") }}
+{{ end }}
+
+{{ define "main" }}
+
+<div class="splash-container">
+  <div class="splash">
+    <h1>{{ .Params.heading }}<span class="fancy">.</span></h1>
+    {{ if isset .Params "handle" }}
+    <span class="handle">@{{ .Params.handle }}</span>
+    {{ end }}
+    <h3 style="max-width: 650px;">
+      {{ .Params.subheading }}
+    </h3>
+    <p>
+      {{ .Params.description }}
+    </p>
+
+    <p style="max-width: 500px;">I <a href="/work">build</a> apps for the web. In my free time, I <a href="https://www.librarything.com/profile/swopnil" target="_blank"> read books</a>, mountain bike, write blog posts, and code.</p>
+    <p id="email-elem" style="size: 8px; max-width: 500px;">You can reach me at <code>hello [at] swopnil.com</code> <a style="text-decoration: none;" href="#" onclick="replaceEmail()">🔐</a>.</p>
+    {{ partial "social-icons.html" .}}
+    
+    <script>
+      function replaceEmail() {
+        let emailElement = document.getElementById("email-elem");
+      emailElement.innerHTML = "<p><small>If you would like to reach me securely, <a href='https://swopnil.com/pgp' target='_blank'>encrypt</a> your message with this <a href='https://keybase.io/swopnil/pgp_keys.asc?fingerprint=a530a5ed4c7985a1fa4fa32db38677b5c56e8796' target='_blank'.>PGP key</a> and send it to <code>secure [at] swopnil.com</code>. </small></p>";
+      }
+
+    </script>
+
+  </div>
+</div>
+
+{{ end }}
