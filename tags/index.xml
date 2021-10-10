@@ -7,7 +7,34 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Fri, 25 Dec 2020 22:54:18 -0600</lastBuildDate><atom:link href="https://swopnil.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Oct 2021 17:05:59 -0500</lastBuildDate><atom:link href="https://swopnil.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>homebrew</title>
+      <link>https://swopnil.com/tags/homebrew/</link>
+      <pubDate>Sun, 10 Oct 2021 17:05:59 -0500</pubDate>
+      
+      <guid>https://swopnil.com/tags/homebrew/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://swopnil.com/tags/linux/</link>
+      <pubDate>Sun, 10 Oct 2021 17:05:59 -0500</pubDate>
+      
+      <guid>https://swopnil.com/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>macos</title>
+      <link>https://swopnil.com/tags/macos/</link>
+      <pubDate>Sun, 10 Oct 2021 17:05:59 -0500</pubDate>
+      
+      <guid>https://swopnil.com/tags/macos/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>machine-learning</title>
       <link>https://swopnil.com/tags/machine-learning/</link>

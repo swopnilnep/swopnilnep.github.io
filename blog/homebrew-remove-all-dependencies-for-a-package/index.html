@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <title>Homebrew: Remove All Dependencies for a Package | Swopnil Shrestha | Software Engineer</title>
+
+  <meta charset="UTF-8">
+  <meta name="language" content="en">
+  <meta name="description" content="Removing a package (formula) and all the packages that are its dependencies in Homebrew using join">
+  <meta name="keywords" content="MacOS , Homebrew , Brew , Package , Brew Package">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Homebrew: Remove All Dependencies for a Package" />
+  <meta name="twitter:description" content="Removing a package (formula) and all the packages that are its dependencies in Homebrew using join"/>
+  <meta name="twitter:site" content="https://twitter.com/swopnilnep" />
+  <meta name="twitter:creator" content="https://twitter.com/swopnilnep" />
+  
+
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+
+
+  
+  
+    
+ 
+  
+  
+  
+  
+  
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/post.min.c3e217b84c00a1ed535efac5536ed3607f886609333f99e716fd1aa58c51a0f8.css" integrity="sha256-w&#43;IXuEwAoe1TXvrFU27TYH&#43;IZgkzP5nnFv0apYxRoPg="/>
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/custom.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css" integrity="sha256-47DEQpj8HBSa&#43;/TImW&#43;5JCeuQeRkm5NMpJWZG3hSuFU="/>
+  
+  
+   
+   
+    
+
+<script type="application/ld+json">
+  
+    {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/swopnil.com"
+      },
+      "articleSection" : "blog",
+      "name" : "Homebrew: Remove All Dependencies for a Package",
+      "headline" : "Homebrew: Remove All Dependencies for a Package",
+      "description" : "Removing a package (formula) and all the packages that are its dependencies in Homebrew using join",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "2021",
+      "datePublished": "2021-10-10 17:05:59 -0500 CDT",
+      "dateModified" : "2021-10-10 17:05:59 -0500 CDT",
+      "url" : "https:\/\/swopnil.com\/blog\/homebrew-remove-all-dependencies-for-a-package\/",
+      "wordCount" : "335",
+      "keywords" : ["MacOS", "Homebrew", "Brew", "Package", "Brew Package", "Blog"]
+    }
+  
+  </script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131922110-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</head>
+
+<body>
+  <div class="burger__container">
+  <div class="burger" aria-controls="navigation" aria-label="Menu">
+    <div class="burger__meat burger__meat--1"></div>
+    <div class="burger__meat burger__meat--2"></div>
+    <div class="burger__meat burger__meat--3"></div>
+  </div>
+</div>
+ 
+
+  <nav class="nav" id="navigation">
+  <ul class="nav__list">
+    
+    
+      <li>
+        <a  href="/">about</a>
+      </li>
+    
+      <li>
+        <a  class="active"
+         href="/blog">blog</a>
+      </li>
+    
+      <li>
+        <a  href="/work">work</a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+  <main>
+    
+    
+
+    <div class="flex-wrapper">
+      <div class="post__container">
+        <div class="post">
+          <header class="post__header">
+            <h1 id="post__title">Homebrew: Remove All Dependencies for a Package</h1>
+            <time datetime="2021-10-10 17:05:59 -0500 CDT" class="post__date">Oct 10 2021</time> 
+          </header>
+          <article class="post__content">
+              
+<p>TLDR: Use the following command to remove a Homebrew package with all dependencies.</p>
+<pre><code class="language-bash">$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join &lt;(brew leaves) &lt;(brew deps ${pkg}))
+</code></pre>
+<hr>
+<p>Homebrew is quite convenient when installing and upgrading packages, however, with a relatively large package (a.k.a formula), such as <code>ffmpeg</code>, Homebrew can end up installing numerous dependencies on your system.</p>
+<p>When we inspect the dependencies of <code>ffmpeg</code> we notice that the formula has over 20 dependencies that will get installed onto your system. Furthermore, many of these dependencies have their own sub-dependencies.</p>
+<pre><code class="language-bash">
+$ brew info ffmpeg 
+
+ffmpeg: stable 4.4 (bottled), HEAD
+Play, record, convert, and stream audio and video
+https://ffmpeg.org/
+Not installed
+From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/ffmpeg.rb
+License: GPL-2.0-or-later
+==&gt; Dependencies
+Build: nasm ✘, pkg-config ✔
+Required: aom ✘, dav1d ✘, fontconfig ✘, freetype ✘, frei0r ✘, gnutls ✘, lame ✘, libass ✘, libbluray ✘, libsoxr ✘, libvidstab ✘, libvorbis ✘, libvpx ✘, opencore-amr ✘, openjpeg ✘, opus ✘, rav1e ✘, rubberband ✘, sdl2 ✘, snappy ✘, speex ✘, srt ✘, tesseract ✘, theora ✘, webp ✘, x264 ✘, x265 ✘, xvid ✘, xz ✘, zeromq ✘, zimg ✘
+==&gt; Options
+--HEAD
+        Install HEAD version
+==&gt; Analytics
+install: 69,644 (30 days), 232,638 (90 days), 1,609,320 (365 days)
+install-on-request: 54,902 (30 days), 184,917 (90 days), 1,330,816 (365 days)
+build-error: 0 (30 days)
+
+</code></pre>
+<p>Brew has a command that removes a package,</p>
+<pre><code class="language-bash">$ brew remove [FORMULA]
+</code></pre>
+<p>however this will only remove the main formula and not any of the dependencies.</p>
+<p>To remove the main package and all its dependencies, we will use the following command. Remember to replace <code>[FORMULA]</code>, with the package that you want to remove with all dependencies.</p>
+<pre><code class="language-bash">$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join &lt;(brew leaves) &lt;(brew deps ${pkg}))
+</code></pre>
+<p><strong>What is the logic here?</strong></p>
+<ol>
+<li>We create a variable <code>pkg</code> and set it to the package to be uninstalled</li>
+<li>We remove the main package <code>pkg</code></li>
+<li>We use join to list all the packages installed in the system, and find packages that are solely dependencies of <code>pkg</code> and uninstall each of those packages</li>
+</ol>
+
+
+              
+          </article>
+          
+
+<ul class="tags__list">
+    
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/homebrew/">homebrew</a>
+    </li>
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/macos/">macos</a>
+    </li>
+    <li class="tag__item">
+        <a class="tag__link" href="https://swopnil.com/tags/linux/">linux</a>
+    </li></ul>
+
+ <div class="pagination">
+  
+    <a class="pagination__item" href="https://swopnil.com/blog/tensorflow-introduction-to-machine-learning/">
+        <span class="pagination__label">Previous Post</span>
+        <span class="pagination__title">TensorFlow: Introduction to Machine Learning</span>
+    </a>
+  
+
+  
+</div>
+
+          
+          <footer class="post__footer">
+            
+
+
+<div class="social-icons">
+  
+     
+    
+      <a
+        class="social-icons__link"
+        title="LinkedIn"
+        href="https://linkedin.com/in/swopnilnep"
+        target="_blank"
+        rel="me noopener"
+      >
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/linkedin.svg')"></div>
+      </a>
+    
+  
+     
+    
+      <a
+        class="social-icons__link"
+        title="GitHub"
+        href="https://github.com/swopnilnep"
+        target="_blank"
+        rel="me noopener"
+      >
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/github.svg')"></div>
+      </a>
+    
+  
+     
+    
+      <a
+        class="social-icons__link"
+        title="Twitter"
+        href="https://twitter.com/swopnilnep"
+        target="_blank"
+        rel="me noopener"
+      >
+        <div class="social-icons__icon" style="background-image: url('https://swopnil.com/svg/twitter.svg')"></div>
+      </a>
+    
+  
+     
+    
+     
+</div>
+
+            <p>© Swopnil Shrestha 2021</p>
+          </footer>
+          </div>
+      </div>
+      
+    </div>
+    
+
+  </main>
+
+   
+
+  
+  <script src="/js/index.min.575dda8d49ee02639942c63564273e6da972ab531dda26a08800bdcb477cbd7f.js" integrity="sha256-V13ajUnuAmOZQsY1ZCc&#43;balyq1Md2iagiAC9y0d8vX8=" crossorigin="anonymous"></script>
+  
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"
+    data-autoloader-path="https://unpkg.com/prismjs@1.20.0/components/"></script>
+
+  
+
+
+</body>
+
+</html>
