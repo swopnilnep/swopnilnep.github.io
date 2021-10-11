@@ -102,5 +102,5 @@ After opening the file,
 
 ## References
 * [Configuring Git Line Endings | GitHub](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings)
-* (Valid Digest Integrity Issue | GitHub)[https://github.com/lxndrblz/anatole/issues/114#issuecomment-828750909]
+* [Valid Digest Integrity Issue | GitHub](https://github.com/lxndrblz/anatole/issues/114#issuecomment-828750909)
 * [SHA-256 Integrity Issue](https://github.com/alanorth/hugo-theme-bootstrap4-blog/issues/53)
