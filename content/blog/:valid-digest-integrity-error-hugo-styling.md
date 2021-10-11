@@ -1,6 +1,6 @@
 ---
 title: "Fixing the CSS Integrity Digest Error in Hugo"
-date: 2021-7-11T20:57:54-05:00
+date: 2021-07-11T20:57:54-05:00
 slug: ""
 description: "How to fix the valid digest "
 keywords: [hugo, css, styling, integrity]
