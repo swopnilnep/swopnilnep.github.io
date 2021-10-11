@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Sun, 10 Oct 2021 17:05:59 -0500</lastBuildDate><atom:link href="https://swopnil.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Oct 2021 20:57:54 -0500</lastBuildDate><atom:link href="https://swopnil.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Fixing the CSS Integrity Digest Error in Hugo</title>
+      <link>https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/</link>
+      <pubDate>Sun, 10 Oct 2021 20:57:54 -0500</pubDate>
+      
+      <guid>https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/</guid>
+      <description>Issue While using Hugo and installing a theme, I encountered this issue. Here are some characteristics.
+While using Hugo, the CSS / styling of the page is not loaded, and the page contains just the plain document, with all the HTML as it is in the source code in the deployed website.
+On the hugo server, in a new browser session the content loads properly as well as all the related styles / CSS.</description>
+    </item>
+    
     <item>
       <title>Homebrew: Remove All Dependencies for a Package</title>
       <link>https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/</link>
