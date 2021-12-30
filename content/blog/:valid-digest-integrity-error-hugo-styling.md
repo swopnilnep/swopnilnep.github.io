@@ -3,9 +3,9 @@ title: "Fixing the CSS Integrity Digest Error in Hugo"
 date: 2021-07-11T20:57:54-05:00
 slug: ""
 description: "How to fix the valid digest "
-keywords: [hugo, css, styling, integrity]
+keywords: [hugo, css, styling, integrity, hugo, integrity error, css, not showing, showing on server]
 draft: false
-tags: [hugo, integrity error, css, not showing, showing on server]
+tags: [development-tools, hugo]
 math: false
 toc: false
 ---

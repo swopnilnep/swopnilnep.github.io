@@ -4,7 +4,7 @@ date: 2020-10-16T02:40:57-05:00
 description: "How publish your own fast, simple and robust application using Hugo, the GoLang based static website generator. Companion tutorial to ACM Luther College."
 draft: false
 keywords: [Hugo, Personal Website, Website, Static Site]
-tags: [software-engineering]
+tags: [software-engineering, hugo]
 toc: true
 ---
 

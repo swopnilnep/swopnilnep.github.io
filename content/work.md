@@ -11,7 +11,7 @@ toc: false
 
 I work at Amazon as a Software Development Engineer. Previously, I have worked at CloudFactory, and several early stage startups.
 
-I graduated with a degree in Computer Science from Luther College in 2021. While in college, I ran the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a> chapter while in college. 
+I graduated with a degree in Computer Science from Luther College in 2021. While in college, I ran the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a>. 
 
 ## Principles 
 

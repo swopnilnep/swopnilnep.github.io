@@ -4,7 +4,7 @@ date: 2021-10-10T17:05:59-05:00
 description: "Removing a package (formula) and all the packages that are its dependencies in Homebrew using join"
 draft: false
 keywords: [MacOS, Homebrew, Brew, Package, Brew Package]
-tags: [homebrew, macos, linux]
+tags: [macos, linux]
 toc: false
 ---
 
