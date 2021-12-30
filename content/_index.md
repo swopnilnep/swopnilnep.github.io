@@ -1,5 +1,5 @@
 ---
 heading: "Hi, I'm Swopnil"
 # handle: "swopnilnep"
-subheading: "I am a Software Engineer based in Austin, TX"
+subheading: "I am a Software Engineer based in Seattle, WA"
 ---

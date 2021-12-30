@@ -9,9 +9,9 @@ math: false
 toc: false
 ---
 
-I have worked at a few places including Amazon, CloudFactory, and several startups.
+I work at Amazon as a Software Development Engineer. Previously, I have worked at CloudFactory, and several early stage startups.
 
-I graduated with Computer Science major from Luther College in 2021. and also ran the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a> chapter while in college. 
+I graduated with a degree in Computer Science from Luther College in 2021. While in college, I ran the <a href="https://luthercss.github.io" target="_blank">ACM Luther College</a> chapter while in college. 
 
 ## Principles 
 
@@ -34,7 +34,7 @@ All of my work at various companies related to software engineering.
 **Amazon**
 <br>*Sep 2021 - Present • Seattle, WA*
 
-Full-Stack Engineer for Seller Fulfillment Services at Fulfillment by Amazon
+Full-Stack Engineer at Seller Fulfillment Services.
 
 Read More:
 * [Fulfillment by Amazon](https://sell.amazon.com/fulfillment-by-amazon)
@@ -45,7 +45,7 @@ Read More:
 **Stealth Startup**
 <br>*March 2021 - Sep 2021 • Austin, TX (Remote)*
 
-Helped build a Conversational E-Commerce Platform for an early-stage startup as a Full-Stack Engineer.
+Piloted core products for a for an early-stage startup delivering a web platform and fundamental conversational platform for a Conversational E-Commerce company within 7 months from an ideation to a partner launch stage.
 
 Read More:
 * [Research: Conversational E-Commerce Market in the US / China](https://swopnil.notion.site/Conversational-Commerce-Market-in-the-US-c07f4069f242483daab79b47b0818b8d)
