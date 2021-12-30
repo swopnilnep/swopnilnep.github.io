@@ -9,15 +9,6 @@
     <copyright>© Swopnil Shrestha {year}</copyright>
     <lastBuildDate>Sun, 10 Oct 2021 17:05:59 -0500</lastBuildDate><atom:link href="https://swopnil.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>homebrew</title>
-      <link>https://swopnil.com/tags/homebrew/</link>
-      <pubDate>Sun, 10 Oct 2021 17:05:59 -0500</pubDate>
-      
-      <guid>https://swopnil.com/tags/homebrew/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>linux</title>
       <link>https://swopnil.com/tags/linux/</link>
       <pubDate>Sun, 10 Oct 2021 17:05:59 -0500</pubDate>
@@ -36,11 +27,11 @@
     </item>
     
     <item>
-      <title>css</title>
-      <link>https://swopnil.com/tags/css/</link>
+      <title>development-tools</title>
+      <link>https://swopnil.com/tags/development-tools/</link>
       <pubDate>Sun, 11 Jul 2021 20:57:54 -0500</pubDate>
       
-      <guid>https://swopnil.com/tags/css/</guid>
+      <guid>https://swopnil.com/tags/development-tools/</guid>
       <description></description>
     </item>
     
@@ -50,33 +41,6 @@
       <pubDate>Sun, 11 Jul 2021 20:57:54 -0500</pubDate>
       
       <guid>https://swopnil.com/tags/hugo/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>integrity error</title>
-      <link>https://swopnil.com/tags/integrity-error/</link>
-      <pubDate>Sun, 11 Jul 2021 20:57:54 -0500</pubDate>
-      
-      <guid>https://swopnil.com/tags/integrity-error/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>not showing</title>
-      <link>https://swopnil.com/tags/not-showing/</link>
-      <pubDate>Sun, 11 Jul 2021 20:57:54 -0500</pubDate>
-      
-      <guid>https://swopnil.com/tags/not-showing/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>showing on server</title>
-      <link>https://swopnil.com/tags/showing-on-server/</link>
-      <pubDate>Sun, 11 Jul 2021 20:57:54 -0500</pubDate>
-      
-      <guid>https://swopnil.com/tags/showing-on-server/</guid>
       <description></description>
     </item>
     
@@ -108,7 +72,7 @@
     </item>
     
     <item>
-      <title>Economics</title>
+      <title>economics</title>
       <link>https://swopnil.com/tags/economics/</link>
       <pubDate>Sat, 03 Oct 2020 02:08:54 -0500</pubDate>
       

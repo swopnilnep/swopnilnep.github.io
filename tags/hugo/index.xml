@@ -19,5 +19,16 @@ While using Hugo, the CSS / styling of the page is not loaded, and the page cont
 On the hugo server, in a new browser session the content loads properly as well as all the related styles / CSS.</description>
     </item>
     
+    <item>
+      <title>Setting Up: Getting Started with Hugo Sites</title>
+      <link>https://swopnil.com/blog/getting-started-with-hugo-sites/</link>
+      <pubDate>Fri, 16 Oct 2020 02:40:57 -0500</pubDate>
+      
+      <guid>https://swopnil.com/blog/getting-started-with-hugo-sites/</guid>
+      <description>Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;ldquo;Building a Personal Static Website&amp;rdquo; workshop on 2020, Oct 18th.
+If you have any questions or trouble with this tutorial, you can message the Luther ACM Slack channel.
+Philosophy Hugo is a fast, flexible static site generator, one of the most popular open source generators among the numerous static site generators available.</description>
+    </item>
+    
   </channel>
 </rss>

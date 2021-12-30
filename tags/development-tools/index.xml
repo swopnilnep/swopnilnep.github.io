@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>not showing on Swopnil Shrestha | Software Engineer</title>
-    <link>https://swopnil.com/tags/not-showing/</link>
-    <description>Recent content in not showing on Swopnil Shrestha | Software Engineer</description>
+    <title>development-tools on Swopnil Shrestha | Software Engineer</title>
+    <link>https://swopnil.com/tags/development-tools/</link>
+    <description>Recent content in development-tools on Swopnil Shrestha | Software Engineer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Swopnil Shrestha {year}</copyright>
-    <lastBuildDate>Sun, 11 Jul 2021 20:57:54 -0500</lastBuildDate><atom:link href="https://swopnil.com/tags/not-showing/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Jul 2021 20:57:54 -0500</lastBuildDate><atom:link href="https://swopnil.com/tags/development-tools/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Fixing the CSS Integrity Digest Error in Hugo</title>
       <link>https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/</link>
