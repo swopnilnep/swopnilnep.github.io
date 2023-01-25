@@ -1,0 +1,61 @@
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+@media (max-width: 1080px) {
+    .container {
+        min-width: 80%;
+    }
+  }
+
+@media (max-width: 720px) {
+    .container {
+        min-width: 85%;
+    }
+  }
+
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+    }
+  }
+
+/* Default (Light Mode) Settings */
+
+body {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: rgb(22, 65, 145);
+}
+
+.code {
+    font-family: monospace;
+    color: maroon;
+    background: #eee;
+}
+
+/* Dark Mode Settings */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #111;
+        color: #ddd;
+    }
+
+    .code {
+        font-family: monospace;
+        color: lightgray;
+        background: rgb(0, 51, 56);
+    }    
+
+    a {
+        color: lightskyblue;
+    }
+}
