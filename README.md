@@ -1,12 +1,55 @@
-# 🌎
+# swopnil.com
 
-![Last Commit Badge](https://img.shields.io/github/last-commit/swopnilnep/swopnil.com) ![Website Up](https://img.shields.io/website?up_color=green&url=https%3A%2F%2Fswopnil.com)
+Personal portfolio and blog built with Eleventy.
 
-Source Code for [swopnil.com](https://swopnil.com).
+## Development
 
-Built using GoLang  on Hugo. Deploys on GitHub Pages.
+```bash
+# Install dependencies
+npm install
 
-For Open Source versions go to [gohugo.io](https://gohugo.io/).
+# Run local dev server
+npm run serve
+
+# Build for production
+npm run build
+```
+
+## Deployment
+
+Automatically deploys to GitHub Pages via GitHub Actions when pushing to `main` branch.
+
+- **main branch**: Source files
+- **deploy branch**: Built site (auto-generated)
+
+## Structure
+
+```
+src/
+├── index.html          # Landing page
+├── style.css           # Global styles
+├── blog/
+│   ├── index.html      # Blog listing
+│   └── *.md            # Blog posts
+├── _layouts/
+│   └── post.html       # Blog post template
+└── _includes/          # Reusable components
+```
+
+## Adding Blog Posts
+
+Create a new `.md` file in `src/blog/`:
+
+```markdown
+---
+layout: post
+title: "Your Post Title"
+date: 2024-03-09
+tags: [tag1, tag2]
+---
+
+Your content here...
+```
 
 ---
-(c) Swopnil Shrestha. All Rights Reserved.
+© Swopnil Shrestha. All Rights Reserved.

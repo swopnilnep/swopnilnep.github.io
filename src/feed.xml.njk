@@ -1,0 +1,26 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Swopnil Shrestha</title>
+  <subtitle>Software Engineer</subtitle>
+  <link href="https://swopnil.com/feed.xml" rel="self"/>
+  <link href="https://swopnil.com/"/>
+  <updated>{{ collections.post | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
+  <id>https://swopnil.com/</id>
+  <author>
+    <name>Swopnil Shrestha</name>
+    <email>hello@swopnil.com</email>
+  </author>
+  {%- for post in collections.post | reverse %}
+  <entry>
+    <title>{{ post.data.title }}</title>
+    <link href="https://swopnil.com{{ post.url }}"/>
+    <updated>{{ post.date | dateToRfc3339 }}</updated>
+    <id>https://swopnil.com{{ post.url }}</id>
+    <content type="html">{{ post.templateContent | htmlToAbsoluteUrls("https://swopnil.com") }}</content>
+  </entry>
+  {%- endfor %}
+</feed>

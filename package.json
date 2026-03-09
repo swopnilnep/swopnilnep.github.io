@@ -1,0 +1,16 @@
+{
+  "name": "swopnil-portfolio",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "eleventy && npm run minify",
+    "minify": "node minify.js",
+    "serve": "eleventy --serve",
+    "clean": "rm -rf _site"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-plugin-rss": "^1.2.0",
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0"
+  }
+}
