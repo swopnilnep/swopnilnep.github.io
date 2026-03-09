@@ -43,6 +43,7 @@ body {
     background-color: #FAFAFA;
     color: black;
     font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+    line-height: 1.6;
 }
 
 a {
