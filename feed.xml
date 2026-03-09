@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Swopnil Shrestha</title>
+  <subtitle>Software Engineer</subtitle>
+  <link href="https://swopnil.com/feed.xml" rel="self"/>
+  <link href="https://swopnil.com/"/>
+  <updated>2021-10-10T00:00:00Z</updated>
+  <id>https://swopnil.com/</id>
+  <author>
+    <name>Swopnil Shrestha</name>
+    <email>hello@swopnil.com</email>
+  </author>
+  <entry>
+    <title>Homebrew: Remove All Dependencies for a Package</title>
+    <link href="https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/"/>
+    <updated>2021-10-10T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/</id>
+    <content type="html">&lt;p&gt;TLDR: Use the following command to remove a Homebrew package with all dependencies.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join &amp;lt;(brew leaves) &amp;lt;(brew deps ${pkg}))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;Homebrew is quite convenient when installing and upgrading packages, however, with a relatively large package (a.k.a formula), such as &lt;code&gt;ffmpeg&lt;/code&gt;, Homebrew can end up installing numerous dependencies on your system.&lt;/p&gt;
+&lt;p&gt;When we inspect the dependencies of &lt;code&gt;ffmpeg&lt;/code&gt; we notice that the formula has over 20 dependencies that will get installed onto your system. Furthermore, many of these dependencies have their own sub-dependencies.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;
+$ brew info ffmpeg 
+
+ffmpeg: stable 4.4 (bottled), HEAD
+Play, record, convert, and stream audio and video
+https://ffmpeg.org/
+Not installed
+From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/ffmpeg.rb
+License: GPL-2.0-or-later
+==&amp;gt; Dependencies
+Build: nasm ✘, pkg-config ✔
+Required: aom ✘, dav1d ✘, fontconfig ✘, freetype ✘, frei0r ✘, gnutls ✘, lame ✘, libass ✘, libbluray ✘, libsoxr ✘, libvidstab ✘, libvorbis ✘, libvpx ✘, opencore-amr ✘, openjpeg ✘, opus ✘, rav1e ✘, rubberband ✘, sdl2 ✘, snappy ✘, speex ✘, srt ✘, tesseract ✘, theora ✘, webp ✘, x264 ✘, x265 ✘, xvid ✘, xz ✘, zeromq ✘, zimg ✘
+==&amp;gt; Options
+--HEAD
+        Install HEAD version
+==&amp;gt; Analytics
+install: 69,644 (30 days), 232,638 (90 days), 1,609,320 (365 days)
+install-on-request: 54,902 (30 days), 184,917 (90 days), 1,330,816 (365 days)
+build-error: 0 (30 days)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Brew has a command that removes a package,&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ brew remove [FORMULA]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;however this will only remove the main formula and not any of the dependencies.&lt;/p&gt;
+&lt;p&gt;To remove the main package and all its dependencies, we will use the following command. Remember to replace &lt;code&gt;[FORMULA]&lt;/code&gt;, with the package that you want to remove with all dependencies.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join &amp;lt;(brew leaves) &amp;lt;(brew deps ${pkg}))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;What is the logic here?&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We create a variable &lt;code&gt;pkg&lt;/code&gt; and set it to the package to be uninstalled&lt;/li&gt;
+&lt;li&gt;We remove the main package &lt;code&gt;pkg&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;We use join to list all the packages installed in the system, and find packages that are solely dependencies of &lt;code&gt;pkg&lt;/code&gt; and uninstall each of those packages&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Fixing the CSS Integrity Digest Error in Hugo</title>
+    <link href="https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/"/>
+    <updated>2021-07-11T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/</id>
+    <content type="html">&lt;h2&gt;Issue&lt;/h2&gt;
+&lt;p&gt;While using Hugo and installing a theme, I encountered this issue. Here are some characteristics.&lt;/p&gt;
+&lt;p&gt;While using Hugo, the CSS / styling of the page is not loaded, and the page contains just the plain document, with all the HTML as it is in the source code in the deployed website.&lt;/p&gt;
+&lt;p&gt;On the hugo server, in a new browser session the content loads properly as well as all the related styles / CSS.&lt;/p&gt;
+&lt;p&gt;Lastly, when opening the browser console on the deployed website, the following error is found:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Failed to find a valid digest in the &#39;integrity&#39; attribute for resource &#39;***&#39; with computed SHA-256 integrity &#39;***&#39;. The resource has been blocked.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Debugging the Issue&lt;/h2&gt;
+&lt;p&gt;While researching this issue, for my setup, I noticed there are 3 parts to my pipeline / deployment environment that could have caused this problem. If you use any of these tools for your deployment, you can apply the solution specific to the tools that you are using.&lt;/p&gt;
+&lt;h3&gt;Solution 1: CloudFlare Cache&lt;/h3&gt;
+&lt;p&gt;Firstly, if you are using CloudFlare as your DNS Provider, this could be a DNS Cache Issue. Although in this case your issue should resolve itself in 24-28 hours automatically.&lt;/p&gt;
+&lt;p&gt;Nevertheless, you can try the following:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Purge the Cache&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CloudFlare →  Caching Configurations → Purge Cache&lt;/li&gt;
+&lt;li&gt;If the root domain is your Hugo website, &lt;strong&gt;Purge Everything&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Otherwise, you can selectively purge the subdomains, pages where Hugo is hosted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If your theme relies on JavaScript for some styling, disable &lt;strong&gt;RocketLoader&lt;/strong&gt; as well in CloudFlare settings&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Solution 2: Git LF Line Ending&lt;/h3&gt;
+&lt;p&gt;Depending on which service you are using to host your code and deploy from, you may have run into an issue with Git, where line endings aren&#39;t common across development environments. If you are collaborating with someone or you are using multiple systems to commit your code follow this tutorial.&lt;/p&gt;
+&lt;p&gt;The goal is to automatically use the same character encoding &lt;a href=&quot;https://en.wikipedia.org/wiki/Newline&quot;&gt;CRLF&lt;/a&gt; for the newline character. If you are using GitHub.com as your code repository, follow this tutorial, otherwise refer to the relevant server &lt;a href=&quot;https://docs.github.com/en/enterprise-server@3.0/get-started/getting-started-with-git/configuring-git-to-handle-line-endings&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Based on your operating system, run the commands:&lt;/p&gt;
+&lt;p&gt;&lt;small&gt;MacOS / Linux&lt;/small&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ git config --global core.autocrlf input
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;small&gt;Windows&lt;/small&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git config --global core.autocrlf true
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next, refresh the repository:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Start by moving all the files (including the hidden . files) from your current folder to a backup folder&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add and commit the empty folder&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git add . -u
+$ git commit -m &amp;quot;Empty folder to prepare for line ending fix&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add back all the moved files from your backup folder&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Normalize and commit the files&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git add . --renormalize
+$ git commit -m &amp;quot;Normalize all line endings&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Solution 3: Remove Integrity Altogether&lt;/h3&gt;
+&lt;p&gt;The last solution is to remove css file integrity altogether. Although, be warned, you don&#39;t want to do this if CORS is a concern for your website.&lt;/p&gt;
+&lt;p&gt;You can do this by going into the &lt;code&gt;baseof.html&lt;/code&gt;. Usually the path to this file is:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;layouts/_default/baseof.html&lt;/code&gt;,&lt;/p&gt;
+&lt;p&gt;but it may differ based on the theme you are using.&lt;/p&gt;
+&lt;p&gt;After opening the file,&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Find the reference link to the CSS file. It looks like the following with integrity enabled:&lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;link rel=&amp;quot;preload&amp;quot; href=&amp;quot;{{ $styles.Permalink }}&amp;quot; integrity=&amp;quot;{{ $styles.Data.Integrity }}&amp;quot; as=&amp;quot;style&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;Remove Integrity (replace with empty string)&lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;link rel=&amp;quot;preload&amp;quot; href=&amp;quot;{{ $styles.Permalink }}&amp;quot; integrity=&amp;quot;&amp;quot; as=&amp;quot;style&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;You may repeat this for all the resources that are not loading. This will ensure that none of the &lt;code&gt;.css&lt;/code&gt; file in your optimized build requires CORS integrity.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings&quot;&gt;Configuring Git Line Endings | GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/lxndrblz/anatole/issues/114#issuecomment-828750909&quot;&gt;Valid Digest Integrity Issue | GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/alanorth/hugo-theme-bootstrap4-blog/issues/53&quot;&gt;SHA-256 Integrity Issue&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Setting Up: Getting Started with Hugo Sites</title>
+    <link href="https://swopnil.com/blog/getting-started-with-Hugo-sites/"/>
+    <updated>2020-10-16T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/getting-started-with-Hugo-sites/</id>
+    <content type="html">&lt;p&gt;Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;quot;Building a Personal Static Website&amp;quot; workshop on &lt;strong&gt;2020, Oct 18th&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;If you have any questions or trouble with this tutorial, you can message the &lt;a href=&quot;https://luthercs.slack.com/archives/C6Z17T3CK&quot;&gt;Luther ACM Slack channel&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Philosophy&lt;/h2&gt;
+&lt;p&gt;Hugo is a fast, flexible static site generator, one of the most popular open source generators among the &lt;a href=&quot;https://jamstack.org/generators/&quot;&gt;numerous static site generators&lt;/a&gt; available. In can be a handy tool to create static websites fast on the go. It can also be an effective tool to host blogs, small web projects or other personal content.&lt;/p&gt;
+&lt;p&gt;In the workshop we will go over how to build a personal portfolio using Hugo. We will then host the website on &lt;a href=&quot;https://pages.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;, in a website that looks like &lt;a href=&quot;https://luthercss.github.io/&quot;&gt;this&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;Basic familiarity with Git version control is recommended. If you don&#39;t plan to publish your website, Git will not be required. If you have already configured and used Git to push and pull from a repository, skip to Step 2.&lt;/p&gt;
+&lt;p&gt;Not familiar with Git? Do not worry! This assumption in this tutorial will be that you are unfamiliar with Git. I still recommend you to take a look at this &lt;a href=&quot;https://education.github.com/git-cheat-sheet-education.pdf&quot;&gt;Git Cheatsheet&lt;/a&gt; to get familiar with some basic commands.&lt;/p&gt;
+&lt;p&gt;The only commands we will be using for this tutorial are:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ git status
+$ git add &amp;lt;location&amp;gt;
+$ git commit -m &amp;quot;Your commit message&amp;quot;
+$ git push &amp;lt;remote&amp;gt; &amp;lt;master&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Step 1: Git &amp;amp; GitHub&lt;/h3&gt;
+&lt;p&gt;More importantly, be sure to setup your Git and GitHub account, so that your deployment into your GitHub site will work properly.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;If you don&#39;t have an account already, create a &lt;a href=&quot;https://github.com/&quot;&gt;GitHub account&lt;/a&gt;. You can sign up with any username that you like.&lt;/li&gt;
+&lt;li&gt;If you haven&#39;t installed Git, go ahead and install it in your computer. Here are the installation links for:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://gitforwindows.org/&quot;&gt;Windows&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://sourceforge.net/projects/git-osx-installer/files/git-2.23.0-intel-universal-mavericks.dmg/download?use_mirror=autoselect&quot;&gt;MacOS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Ubuntu
+&lt;ul&gt;
+&lt;li&gt;Open your Terminal and run the command:&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sudo apt-get install git-all&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Now, configure your identity on Git. Open any terminal app you have and enter the following. Replace the given examples with your details.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ git config --global user.name &amp;quot;John Doe&amp;quot;
+$ git config --global user.email johndoe@example.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;Now, follow this tutorial to &lt;a href=&quot;https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent&quot;&gt;Generate a new SSH key and add it to the ssh-agent&lt;/a&gt;. Remember to use the tutorial specific to your operating system.&lt;/li&gt;
+&lt;li&gt;Last step for this section, &lt;a href=&quot;https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account&quot;&gt;Add the new SSH key to your GitHub account&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Step 2: Installing Hugo (Windows)&lt;/h3&gt;
+&lt;p&gt;For Windows users, you can either go through this &lt;a href=&quot;https://gohugo.io/getting-started/installing/#windows&quot;&gt;text tutorial&lt;/a&gt; or watch a &lt;a href=&quot;https://www.youtube.com/watch?v=G7umPCU-8xc&quot;&gt;video tutorial&lt;/a&gt;. Both yield the same result of installing Hugo on your computer.&lt;/p&gt;
+&lt;h3&gt;Step 2: Installing Hugo (MacOS / Linux)&lt;/h3&gt;
+&lt;p&gt;If you are on MacOS or Linux i.e. any UNIX based operating system, you need to have &lt;code&gt;brew&lt;/code&gt; configured beforehand to install &lt;code&gt;hugo&lt;/code&gt;. To check if you have &lt;code&gt;brew&lt;/code&gt; installed, open your terminal and enter&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ brew -v
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;Install &lt;code&gt;brew&lt;/code&gt; if you haven&#39;t already.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Run &lt;code&gt;brew&lt;/code&gt; to install &lt;code&gt;hugo&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;brew install hugo
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Check that &lt;code&gt;hugo&lt;/code&gt; is installed properly&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;
+# show the location of the hugo executable
+which hugo
+/usr/local/bin/hugo
+
+# show the installed version
+ls -l $( which hugo )
+lrwxr-xr-x  1 mdhender admin  30 Mar 28 22:19 /usr/local/bin/hugo -&amp;gt; ../Cellar/hugo/0.13_1/bin/hugo
+
+# verify that hugo runs correctly
+hugo version
+Hugo Static Site Generator v0.13 BuildDate: 2015-03-09T21:34:47-05:00
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you get the output, congratulations! You should be all set for the workshop.&lt;/p&gt;
+&lt;h2&gt;Event&lt;/h2&gt;
+&lt;p&gt;Once you have setup both Git and Hugo on your computer, you are all set to begin. See you on Sunday! Let us know you have any questions or trouble with the setup.&lt;/p&gt;
+&lt;h2&gt;Author&lt;/h2&gt;
+&lt;p&gt;This tutorial is authored by &lt;a href=&quot;https://swopnil.com/&quot;&gt;Swopnil Shrestha&lt;/a&gt; as part of a workshop series for ACM Luther College for the 2020-2021 academic year.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Welcome</title>
+    <link href="https://swopnil.com/blog/welcome/"/>
+    <updated>2019-04-01T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/welcome/</id>
+    <content type="html">&lt;p&gt;&lt;code&gt;&amp;quot;Hello, World!&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This is the obligatory first post. Welcome to my blog.&lt;/p&gt;
+</content>
+  </entry>
+</feed>
