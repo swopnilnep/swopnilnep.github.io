@@ -266,3 +266,31 @@ pre code {
   font-size: 0.75rem;
   color: var(--faint);
 }
+
+/* Home landing — centered, narrow, high-contrast (bold heading, then body) */
+.home {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.home-card {
+  max-width: 33rem;
+}
+
+.home-card h1 {
+  font-weight: 700;
+  font-size: 1.45rem;
+  margin: 0 0 1.1rem;
+}
+
+.home-card p {
+  margin: 0 0 1rem;
+}
+
+.home-card .links {
+  margin-top: 1.6rem;
+}
