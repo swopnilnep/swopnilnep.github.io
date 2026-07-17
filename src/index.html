@@ -3,32 +3,63 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Swopnil Shrestha</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="icon" href="./favicon.png" type="image/png">
+    <meta name="description" content="Swopnil Shrestha — software engineer in Seattle. Distributed systems at Amazon; books and photography on the side.">
+    <script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/style.css">
   </head>
   <body>
-    <main>
-        <div class="container">
-            <h3>Hi, I'm Swopnil.</h3>
-            <p>
-                I am a Software Engineer based in Seattle, Washington.
-            </p> 
-            <p>
-                I build distributed services and systems for the internet at Amazon. In my free time I <a target="_blank" href="http://librarything.com/profile/swopnil">read books</a>, 
-                <a target="_blank" href="http://pho.swopnil.com">photograph</a> the places I visit, and fill my time exploring new hobbies and skills.
-            </p>
-            <p>
-                If you'd like to reach me, send a message over to <code>hello [at] swopnil.com</code>. You can learn more about my <a href="/work">work</a> here.
-            </p>
-            <br>
-            <p>
-                <a href="http://twitter.com/swopnilnep" target="_blank">twitter</a>, 
-                <a href="http://github.com/swopnilnep" target="_blank">github</a>, 
-                <a href="http://linkedin.com/in/swopnilnep" target="_blank">linkedin</a>
-            </p>
+    <div class="container site-main">
+      <nav class="site-nav">
+        <div class="nav-links">
+          <a href="/" aria-current="page">about</a>
+          <a href="/work">work</a>
+          <a href="/blog">blog</a>
+          <a href="https://pho.swopnil.com">photos</a>
         </div>
-    </main>
+        <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+          </svg>
+        </button>
+      </nav>
+
+      <header class="page-head">
+        <h1>Swopnil Shrestha</h1>
+        <p class="tagline">Software engineer in Seattle, Washington.</p>
+      </header>
+
+      <main class="prose">
+        <p>
+          I build distributed services and systems for the internet at Amazon. In my free time I
+          <a target="_blank" href="http://librarything.com/profile/swopnil">read books</a>,
+          <a href="https://pho.swopnil.com">photograph</a> the places I visit, and fill my time
+          exploring new hobbies and skills.
+        </p>
+        <p>
+          If you'd like to reach me, send a message over to <code>hello [at] swopnil.com</code>.
+          You can learn more about my <a href="/work">work</a> here.
+        </p>
+        <p>
+          <a href="http://twitter.com/swopnilnep" target="_blank">twitter</a> ·
+          <a href="http://github.com/swopnilnep" target="_blank">github</a> ·
+          <a href="http://linkedin.com/in/swopnilnep" target="_blank">linkedin</a>
+        </p>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div>
+        <a href="https://github.com/swopnilnep" target="_blank">github</a>
+        <a href="https://linkedin.com/in/swopnilnep" target="_blank">linkedin</a>
+        <a href="/keys">pgp</a>
+      </div>
+      <div class="footer-site">swopnil.com</div>
+    </footer>
+
+    <script src="/theme.js"></script>
   </body>
 </html>

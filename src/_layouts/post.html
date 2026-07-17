@@ -3,54 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - Swopnil Shrestha</title>
+    <title>{{ title }} — Swopnil Shrestha</title>
+    <script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/style.css">
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <style>
-        .blog-container {
-            max-width: 700px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-        .blog-nav {
-            margin-bottom: 1.5rem;
-        }
-        .blog-nav a {
-            margin-right: 1rem;
-        }
-        .blog-header {
-            margin-bottom: 2.5rem;
-        }
-        .blog-header h1 {
-            margin-bottom: 0.5rem;
-            margin-top: 0;
-        }
-        .blog-meta {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .blog-content {
-            line-height: 1.7;
-        }
-        @media (prefers-color-scheme: dark) {
-            .blog-meta {
-                color: #999;
-            }
-        }
-    </style>
 </head>
 <body>
-    <main class="blog-container">
-        <nav class="blog-nav">
-            <a href="/">about</a>
-            <a href="/blog">blog</a>
-            <a href="/work">work</a>
-            <a href="/feed.xml">rss</a>
+    <div class="container site-main">
+        <nav class="site-nav">
+            <div class="nav-links">
+                <a href="/">about</a>
+                <a href="/work">work</a>
+                <a href="/blog" aria-current="page">blog</a>
+                <a href="https://pho.swopnil.com">photos</a>
+            </div>
+            <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+                </svg>
+            </button>
         </nav>
-        <article>
-            <header class="blog-header">
+
+        <article class="prose">
+            <header class="blog-header page-head">
                 <h1>{{ title }}</h1>
-                <div class="blog-meta">
+                <div class="post-meta">
                     <time datetime="{{ date }}">{{ date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</time>
                 </div>
             </header>
@@ -58,7 +37,8 @@
                 {{ content | safe }}
             </div>
         </article>
-    </main>
+    </div>
+
     <footer class="site-footer">
         <div>
             <a href="https://github.com/swopnilnep" target="_blank">github</a>
@@ -67,5 +47,7 @@
         </div>
         <div class="footer-site">swopnil.com</div>
     </footer>
+
+    <script src="/theme.js"></script>
 </body>
 </html>

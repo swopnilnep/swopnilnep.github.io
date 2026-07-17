@@ -3,35 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGP Key - Swopnil Shrestha</title>
+    <title>PGP Key — Swopnil Shrestha</title>
+    <script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/style.css">
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <style>
-        .keys-container {
-            max-width: 700px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-        .blog-nav {
-            margin-bottom: 1.5rem;
-        }
-        .blog-nav a {
-            margin-right: 1rem;
-        }
-    </style>
 </head>
 <body>
-    <main class="keys-container">
-        <nav class="blog-nav">
-            <a href="/">about</a>
-            <a href="/blog">blog</a>
-            <a href="/work">work</a>
-            <a href="/feed.xml">rss</a>
+    <div class="container site-main">
+        <nav class="site-nav">
+            <div class="nav-links">
+                <a href="/">about</a>
+                <a href="/work">work</a>
+                <a href="/blog">blog</a>
+                <a href="https://pho.swopnil.com">photos</a>
+            </div>
+            <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+                </svg>
+            </button>
         </nav>
-        <h1>PGP Public Key</h1>
-        <p>Use this key to send me encrypted messages at <code>secure [at] swopnil.com</code></p>
-        <pre><code>{{ pgpKey }}</code></pre>
-    </main>
+
+        <header class="page-head">
+            <h1>PGP Public Key</h1>
+        </header>
+
+        <main class="prose">
+            <p>Use this key to send me encrypted messages at <code>secure [at] swopnil.com</code></p>
+            <pre><code>{{ pgpKey }}</code></pre>
+        </main>
+    </div>
+
     <footer class="site-footer">
         <div>
             <a href="https://github.com/swopnilnep" target="_blank">github</a>
@@ -40,5 +44,7 @@
         </div>
         <div class="footer-site">swopnil.com</div>
     </footer>
+
+    <script src="/theme.js"></script>
 </body>
 </html>
