@@ -12,7 +12,9 @@ module.exports = function(eleventyConfig) {
   
   // Copy static assets
   eleventyConfig.addPassthroughCopy("src/style.css");
+  eleventyConfig.addPassthroughCopy("src/theme.js");
   eleventyConfig.addPassthroughCopy("src/favicon.png");
+  eleventyConfig.addPassthroughCopy("src/favicon.svg");
   eleventyConfig.addPassthroughCopy("src/pgp.txt");
   eleventyConfig.addPassthroughCopy("src/CNAME");
   eleventyConfig.addPassthroughCopy("src/robots.txt");
