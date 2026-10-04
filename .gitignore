@@ -2,3 +2,14 @@ test_build
 .DS_Store
 _site
 node_modules
+
+# Local planning and context notes (not published)
+CHANGES.md
+FINAL_CHANGES.md
+IMPLEMENTATION.md
+IMPROVEMENTS.md
+SETUP_COMPLETE.md
+WORK_UPDATE.md
+ATLAS_DESIGN.md
+ATLAS_EXECUTION_PLAN.md
+CLAUDE.md
