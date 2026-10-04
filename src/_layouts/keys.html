@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGP Key — Swopnil Shrestha</title>
+    <title>PGP Key · Swopnil Shrestha</title>
     <script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -16,7 +16,9 @@
                 <a href="/">about</a>
                 <a href="/work">work</a>
                 <a href="/blog">blog</a>
-                <a href="https://pho.swopnil.com">photos</a>
+            </div>
+            <div class="nav-projects" aria-label="Projects">
+                <a href="https://pho.swopnil.com">pho</a>
                 <a href="https://atlas.swopnil.com">atlas</a>
             </div>
             <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
@@ -37,14 +39,7 @@
         </main>
     </div>
 
-    <footer class="site-footer">
-        <div>
-            <a href="https://github.com/swopnilnep" target="_blank">github</a>
-            <a href="https://linkedin.com/in/swopnilnep" target="_blank">linkedin</a>
-            <a href="/keys">pgp</a>
-        </div>
-        <div class="footer-site">swopnil.com</div>
-    </footer>
+    {% include "footer.html" %}
 
     <script src="/theme.js"></script>
 </body>

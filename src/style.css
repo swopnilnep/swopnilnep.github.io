@@ -79,6 +79,26 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Links inside running text: always underlined so they read as clickable */
+.home-card p a,
+.prose p a,
+.prose li a,
+.post-content a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 120ms ease, color 120ms ease;
+}
+.home-card p a:hover,
+.prose p a:hover,
+.prose li a:hover,
+.post-content a:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
+}
+
 code {
   font-family: 'Courier New', Courier, monospace;
   color: var(--code-text);
@@ -282,6 +302,27 @@ a:focus-visible, button:focus-visible {
   margin-bottom: 2.5rem;
 }
 
+/* Separate projects (subdomains), set apart from the main site links */
+.nav-projects {
+  display: flex;
+  gap: 1.1rem;
+  margin-left: auto;
+  margin-right: 1rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid var(--line);
+  font-family: var(--sans);
+}
+.nav-projects a {
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.nav-projects a:hover { color: var(--text); text-decoration: none; }
+@media (max-width: 640px) {
+  .nav-projects { gap: 0.8rem; margin-right: 0.5rem; padding-left: 0.8rem; }
+}
+
 /* Footer — darker band, both themes */
 .site-footer {
   flex-shrink: 0;
@@ -295,21 +336,32 @@ a:focus-visible, button:focus-visible {
   line-height: 1.6;
 }
 
-.site-footer a {
-  color: var(--text);
-  margin: 0 0.6rem;
-  font-size: 0.85rem;
+.footer-inner {
+  max-width: 46rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  align-items: start;
+  gap: 2rem;
+  text-align: left;
 }
-
-.site-footer a:hover {
-  color: var(--accent);
-  text-decoration: none;
-}
-
+.footer-name { color: var(--text); font-weight: 600; font-size: 0.9rem; }
+.site-footer code { font-size: 0.8rem; background: none; padding: 0; }
+.footer-col { display: flex; flex-direction: column; gap: 0.3rem; }
+.site-footer a { color: var(--text); font-size: 0.85rem; }
+.site-footer a:hover { color: var(--accent); text-decoration: none; }
 .footer-site {
-  margin-top: 0.75rem;
+  max-width: 46rem;
+  margin: 2rem auto 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
   font-size: 0.75rem;
   color: var(--faint);
+  text-align: left;
+}
+@media (max-width: 640px) {
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .footer-inner > .footer-col:first-child { grid-column: 1 / -1; }
 }
 
 /* Home landing — centered, narrow, high-contrast (bold heading, then body) */
@@ -337,5 +389,7 @@ a:focus-visible, button:focus-visible {
 }
 
 .home-card .links {
+  font-family: var(--sans);
+  font-size: 0.9rem;
   margin-top: 1.6rem;
 }

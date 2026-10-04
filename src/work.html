@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work — Swopnil Shrestha</title>
+    <title>Work · Swopnil Shrestha</title>
     <script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -16,7 +16,9 @@
                 <a href="/">about</a>
                 <a href="/work" aria-current="page">work</a>
                 <a href="/blog">blog</a>
-                <a href="https://pho.swopnil.com">photos</a>
+            </div>
+            <div class="nav-projects" aria-label="Projects">
+                <a href="https://pho.swopnil.com">pho</a>
                 <a href="https://atlas.swopnil.com">atlas</a>
             </div>
             <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
@@ -33,78 +35,64 @@
 
         <main class="prose">
             <div class="work-section">
-                <p>I'm a Software Engineer at Amazon, where I build reliable, scalable distributed systems that power seller fulfillment and performance infrastructure at a global scale.</p>
-
-                <p>My work focuses on real-time data processing platforms that handle billions of daily events across 30+ global marketplaces, computing performance metrics and triggering automated enforcement actions that impact thousands of sellers.</p>
+                <p>I'm a software engineer at Amazon. I design and run distributed systems, and I build AI agents and the infrastructure behind them.</p>
             </div>
 
             <div class="work-section">
                 <h2>Principles</h2>
-                <p>I believe effective engineering organizations are guided by clear values that help teams make better decisions. Here are principles that guide my work:</p>
-
+                <p>A few ideas I come back to when designing systems and working with teams:</p>
                 <ul>
-                    <li><strong>Ownership:</strong> Take responsibility for outcomes. Build things you'd be proud to show others. Quality compounds over time.</li>
-
-                    <li><strong>First principles thinking:</strong> Break down complex problems to their fundamentals. Build solutions from the ground up rather than by analogy.</li>
-
-                    <li><strong>Systems thinking:</strong> Think in systems—understand reinforcing and balancing feedback loops, and how changes propagate through interconnected components. Inspired by <a href="https://www.librarything.com/work/7467944" target="_blank">Thinking in Systems</a>.</li>
-
-                    <li><strong>Values alignment:</strong> Aligning on the core requirements and functions of what you're building precedes the actual solution itself. This applies to security, AI systems, and all engineering work. As AI makes writing and testing code easier, the <a href="https://rtpg.co/2024/08/31/cost-of-a-values-gap/" target="_blank">cost of a values gap</a> becomes the dominant factor. We need to be value-aligned with our teams and ensure the systems we create align with us.</li>
-
-                    <li><strong>Force multiplication, trust, and velocity:</strong> Scale yourself by building tools, automation, and systems that enable others. Document reasoning, share context openly, and create frameworks that multiply team impact. Trust enables velocity.</li>
-
-                    <li><strong>Continuous learning:</strong> Never stop learning, but evaluate approaches based on merit, not hype or novelty. Invest in understanding fundamentals deeply.</li>
+                    <li><strong>First principles:</strong> Start from what must be true, not from how it's usually done. Break a problem down to its fundamentals before choosing a solution.</li>
+                    <li><strong>Second-order thinking:</strong> Ask what happens next. A change that saves time today can add cost, load, or risk somewhere else later.</li>
+                    <li><strong>Systems thinking:</strong> Look at feedback loops and at how a change travels through connected parts. Inspired by <a href="https://www.librarything.com/work/7467944" target="_blank">Thinking in Systems</a>.</li>
+                    <li><strong>Conway's law:</strong> <a href="https://en.wikipedia.org/wiki/Conway%27s_law" target="_blank">Systems mirror the teams that build them</a>, so service boundaries and team boundaries should be designed together.</li>
+                    <li><strong>Jevons paradox:</strong> <a href="https://en.wikipedia.org/wiki/Jevons_paradox" target="_blank">When something gets cheaper, we use more of it.</a> AI makes code cheap to write, so clear requirements, review, and testing matter more, not less.</li>
+                    <li><strong>Values alignment:</strong> Agreeing on what a system is for comes before deciding how to build it. As code gets easier to produce, the <a href="https://rtpg.co/2024/08/31/cost-of-a-values-gap/" target="_blank">cost of a values gap</a> becomes the dominant cost.</li>
+                    <li><strong>Force multiplication:</strong> Scale yourself with tools, automation, and documentation that make other engineers faster. Trust enables velocity.</li>
                 </ul>
+            </div>
+
+            <div class="work-section">
+                <h2>Selected work</h2>
+                <ul>
+                    <li><strong>Distributed systems at scale:</strong> Event-driven services for seller performance that process over a billion events a day across 30 marketplaces. Led the migration of a 25 TB metrics stack onto cheaper infrastructure.</li>
+                    <li><strong>AI agents and infrastructure:</strong> Agents that build and maintain service integrations, and the infrastructure they run on, with contributions to Amazon's internal agent harnesses. More than 100,000 invocations a month, saving about 300 workdays of engineering time every month. GenAI champion for my organization, with several GenAI awards.</li>
+                    <li><strong>A knowledge map for agents:</strong> A knowledge map and harness that lets agents find the right service, its owners, and its context, built on the <a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md" target="_blank">Open Knowledge Format</a>. It automated most repeatable maintenance and ticket work, and answers about 1,000 agent queries a month.</li>
+                    <li><strong>Security:</strong> Security reviewer for tier-1 applications, including threat modeling. Wrote security guidance read by more than 1,000 engineers at Amazon.</li>
+                </ul>
+                <p>Mostly Java and Python, on AWS (DynamoDB, SQS, SNS, Lambda, CloudWatch) with Redis, OpenSearch, and Postgres. For detailed results or a resume, write to <code>hello [at] swopnil.com</code>.</p>
             </div>
 
             <div class="work-section">
                 <h2>Experience</h2>
 
-                <div class="job-title">Software Development Engineer I / II</div>
-                <div class="job-meta">Amazon.com, Seller Fulfillment Services • Sep 2021 – Present • Bellevue, WA</div>
-                <p>Building distributed systems for seller performance and enforcement with $30B+ yearly turnover.</p>
-                <ul>
-                    <li>Architected infrastructure migration for 25TB+ metrics stack, saving $12k+ monthly</li>
-                    <li>Engineered tier-based enrollment system for global fulfillment programs</li>
-                    <li>Led GenAI initiatives across org, built infrastructure (skills, RAGs, MCP servers, agentic frameworks) to accelerate development, part of GenAI champions group propagating best practices</li>
-                    <li>Built suite of secure developer productivity tools (Time Conversion Util, Markdown, Text Editing Utils, LLM conversation analytics and sharing) used by several thousand Amazonians as personal project</li>
-                    <li>Scaled event-driven system processing 1.5B+ daily events across 30 global marketplaces</li>
-                    <li>Served as Security Reviewer for Tier-1 service certification, performing threat modeling</li>
-                    <li>Mentored engineers and created technical documentation used by 40+ engineers</li>
-                </ul>
+                <div class="job-title">Software Development Engineer I, II</div>
+                <div class="job-meta">Amazon · Sep 2021 – Present · Bellevue, WA</div>
+                <p>Distributed systems for seller fulfillment and performance, AI agents and developer infrastructure, and security reviews. I also mentor engineers and build developer tools used by thousands of people across Amazon.</p>
 
                 <div class="job-title">Software Engineer</div>
-                <div class="job-meta">Stealth Startup • Feb 2021 – Sep 2021</div>
-                <p>Piloted conversational AI e-commerce platform in stealth mode.</p>
+                <div class="job-meta">Stealth startup · Feb 2021 – Sep 2021</div>
+                <p>Built an early conversational AI platform for e-commerce.</p>
 
                 <div class="job-title">Software Engineering Intern</div>
-                <div class="job-meta">WiseYak, Inc • Jun 2020 – Sep 2020</div>
-                <p>Built backend components for NLP-enabled telehealth platform using Clojure.</p>
+                <div class="job-meta">WiseYak · Jun 2020 – Sep 2020</div>
+                <p>Backend components for an NLP-based telehealth platform, in Clojure.</p>
 
                 <div class="job-title">Software Engineering Intern</div>
-                <div class="job-meta">Venio Systems • May 2019 – Aug 2019</div>
-                <p>Built email analytics tool using social network graphs to identify unlawful communications for legislative organizations.</p>
+                <div class="job-meta">Venio Systems · May 2019 – Aug 2019</div>
+                <p>An email analytics tool that used social network graphs to flag unlawful communications.</p>
             </div>
 
             <div class="work-section">
                 <h2>Education</h2>
                 <div class="job-title">Luther College</div>
-                <div class="job-meta">Bachelor's Degree, Computer Science</div>
-                <p>Relevant coursework: Advanced Algorithms, Operating Systems, Information Security, Machine Learning, Computer Networks</p>
-
-                <p><strong>President, Association for Computing Machinery (ACM) at Luther College:</strong> Instructed 20+ student developers on software engineering topics, organized events and panels with prominent figures in computer science.</p>
+                <div class="job-meta">Bachelor's degree, Computer Science</div>
+                <p>President of the college's ACM chapter: taught student developers and organized talks and panels.</p>
             </div>
         </main>
     </div>
 
-    <footer class="site-footer">
-        <div>
-            <a href="https://github.com/swopnilnep" target="_blank">github</a>
-            <a href="https://linkedin.com/in/swopnilnep" target="_blank">linkedin</a>
-            <a href="/keys">pgp</a>
-        </div>
-        <div class="footer-site">swopnil.com</div>
-    </footer>
+    {% include "footer.html" %}
 
     <script src="/theme.js"></script>
 </body>
