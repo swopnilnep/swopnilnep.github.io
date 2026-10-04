@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <g fill="#5a7a5a">
-    <!-- ears -->
-    <ellipse cx="12.4" cy="8.6" rx="2.2" ry="6.6" transform="rotate(-15 12.4 8.6)"/>
-    <ellipse cx="19.6" cy="8.6" rx="2.2" ry="6.6" transform="rotate(15 19.6 8.6)"/>
-    <!-- head -->
-    <circle cx="16" cy="16.5" r="6"/>
-    <!-- body -->
-    <ellipse cx="16" cy="24.5" rx="7.4" ry="5.4"/>
+  <rect width="32" height="32" rx="7" fill="#2e4fa0"/>
+  <g stroke="#dbe7f5" stroke-width="1.6" stroke-linecap="round" fill="none">
+    <path d="M5 24 L13 10 L18.5 18 L21.5 14 L27 24 Z"/>
+    <path d="M13 10 L21.5 14" opacity=".55"/>
   </g>
+  <g fill="#ffffff">
+    <circle cx="13" cy="10" r="2.4"/>
+    <circle cx="21.5" cy="14" r="2"/>
+    <circle cx="18.5" cy="18" r="1.7"/>
+    <circle cx="5" cy="24" r="1.7"/>
+    <circle cx="27" cy="24" r="1.7"/>
+  </g>
+  <circle cx="13" cy="10" r="1" fill="#ff7a59"/>
 </svg>
