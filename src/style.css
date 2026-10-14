@@ -1,7 +1,7 @@
 /* swopnil.com — shared minimalist system (matches pho.swopnil.com) */
 
 :root {
-  --bg: #fafafa;
+  color-scheme: light;
   --text: #1a1a1a;
   --muted: #777;
   --faint: #999;
@@ -11,18 +11,17 @@
   --code-text: maroon;
   --radius: 8px;
   --surface-hover: #f1f0ec;
-  --footer-bg: #efeee9;
   --sans: "Atlas Inter", Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Bundled Inter (SIL OFL, /fonts/): UI text (nav, footer, controls). */
+/* Bundled Inter (SIL OFL, /fonts/): UI text (nav, controls). */
 @font-face { font-family: "Atlas Inter"; src: url("/fonts/inter-latin-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Atlas Inter"; src: url("/fonts/inter-latin-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
 
 /* Auto dark — unless the visitor has explicitly forced light. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #141414;
+    color-scheme: dark;
     --text: #e6e6e6;
     --muted: #9a9a9a;
     --faint: #6a6a6a;
@@ -31,13 +30,12 @@
     --code-bg: #003338;
     --code-text: lightgray;
     --surface-hover: #262625;
-    --footer-bg: #0d0d0d;
   }
 }
 
 /* Manual dark override (persisted in localStorage). */
 :root[data-theme="dark"] {
-  --bg: #141414;
+  color-scheme: dark;
   --text: #e6e6e6;
   --muted: #9a9a9a;
   --faint: #6a6a6a;
@@ -46,7 +44,6 @@
   --code-bg: #003338;
   --code-text: lightgray;
   --surface-hover: #262625;
-  --footer-bg: #0d0d0d;
 }
 
 html {
@@ -58,7 +55,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   line-height: 1.6;
@@ -144,7 +140,7 @@ pre code {
   padding-top: 1.6rem;
 }
 
-.site-nav, .site-footer, .theme-toggle, button, .post-meta, .post-date, .job-meta {
+.site-nav, .theme-toggle, button, .post-meta, .post-date, .job-meta {
   font-family: var(--sans);
 }
 
@@ -321,47 +317,6 @@ a:focus-visible, button:focus-visible {
 .nav-projects a:hover { color: var(--text); text-decoration: none; }
 @media (max-width: 640px) {
   .nav-projects { gap: 0.8rem; margin-right: 0.5rem; padding-left: 0.8rem; }
-}
-
-/* Footer — darker band, both themes */
-.site-footer {
-  flex-shrink: 0;
-  background: var(--footer-bg);
-  border-top: 1px solid var(--line);
-  padding: 2.75rem 1.5rem 3.25rem;
-  text-align: center;
-  margin-top: 3rem;
-  color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.6;
-}
-
-.footer-inner {
-  max-width: 46rem;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  align-items: start;
-  gap: 2rem;
-  text-align: left;
-}
-.footer-name { color: var(--text); font-weight: 600; font-size: 0.9rem; }
-.site-footer code { font-size: 0.8rem; background: none; padding: 0; }
-.footer-col { display: flex; flex-direction: column; gap: 0.3rem; }
-.site-footer a { color: var(--text); font-size: 0.85rem; }
-.site-footer a:hover { color: var(--accent); text-decoration: none; }
-.footer-site {
-  max-width: 46rem;
-  margin: 2rem auto 0;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
-  font-size: 0.75rem;
-  color: var(--faint);
-  text-align: left;
-}
-@media (max-width: 640px) {
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-  .footer-inner > .footer-col:first-child { grid-column: 1 / -1; }
 }
 
 /* Home landing — centered, narrow, high-contrast (bold heading, then body) */
