@@ -4,12 +4,121 @@
   <subtitle>Software Engineer</subtitle>
   <link href="https://swopnil.com/feed.xml" rel="self"/>
   <link href="https://swopnil.com/"/>
-  <updated>2026-09-01T12:00:00Z</updated>
+  <updated>2026-10-01T00:00:00Z</updated>
   <id>https://swopnil.com/</id>
   <author>
     <name>Swopnil Shrestha</name>
     <email>hello@swopnil.com</email>
   </author>
+  <entry>
+    <title>Benchmarking Strands Decider: multi-question latency and prefix caching</title>
+    <link href="https://swopnil.com/blog/benchmarking-strands-decider/"/>
+    <updated>2026-10-01T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/benchmarking-strands-decider/</id>
+    <content type="html">&lt;p&gt;Decision models evaluate typed predicates directly without autoregressive text generation. A core architectural argument for this class of model is amortized multi-question evaluation: encoding a document once, then scoring multiple questions in parallel against the cached representation.&lt;/p&gt;
+&lt;p&gt;To evaluate how this scales in practice, I benchmarked Strands Decider 2B across 1 to 128 questions over a single document, comparing its shared-prefix cache against a naive re-encoding baseline. The benchmark code and data are available on &lt;a href=&quot;https://github.com/swopnilnep/strands-decider-benchmark&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;benchmark-setup&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#benchmark-setup&quot;&gt;&lt;span&gt;Benchmark setup&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;State:&lt;/strong&gt; A 2,201-token synthetic service specification covering 48 services, each detailing route, authentication, rate limits, ownership, and latency targets.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Questions:&lt;/strong&gt; 128 typed yes/no questions (&lt;code&gt;NoulQuestion&lt;/code&gt;) evaluating service properties.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Paths tested:&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Shared prefix&lt;/em&gt; (&lt;code&gt;use_prefix_cache=True&lt;/code&gt;, default): Encodes the state once per batch (default &lt;code&gt;max_batch=32&lt;/code&gt;), broadcasting the cached key-value states to evaluate question suffixes.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Naive re-encode&lt;/em&gt; (&lt;code&gt;use_prefix_cache=False&lt;/code&gt;): Concatenates state and question for each query, re-encoding the full prompt every time.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Metrics:&lt;/strong&gt; Median wall-clock latency across repeated runs and input token counts reported by the model engine.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Environment:&lt;/strong&gt; Apple M3 Pro (MPS backend). The hybrid torso runs its reference implementation because &lt;code&gt;causal_conv1d&lt;/code&gt; is not installed, so absolute latencies are conservative. The token model and relative ratios remain hardware-independent.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;latency-and-token-scaling&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#latency-and-token-scaling&quot;&gt;&lt;span&gt;Latency and token scaling&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align:right&quot;&gt;Questions&lt;/th&gt;
+&lt;th style=&quot;text-align:right&quot;&gt;Shared prefix (ms)&lt;/th&gt;
+&lt;th style=&quot;text-align:right&quot;&gt;Naive re-encode (ms)&lt;/th&gt;
+&lt;th style=&quot;text-align:right&quot;&gt;Shared tokens&lt;/th&gt;
+&lt;th style=&quot;text-align:right&quot;&gt;Naive tokens&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;1&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,120&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,118&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,283&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,283&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,299&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;4,514&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,358&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;4,568&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;4&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,438&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;9,093&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,520&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;9,150&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;8&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,730&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;18,413&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;2,826&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;18,296&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;16&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;3,474&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;3,443&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;32&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;4,936&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;4,675&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;64&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;9,889&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;9,363&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;128&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;19,414&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;18,722&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;(not run)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://swopnil.com/img/blog/decider-battery.png&quot; alt=&quot;Log-log plots of latency and input tokens versus question count for shared-prefix and naive paths.&quot; loading=&quot;lazy&quot; /&gt;
+  &lt;figcaption&gt;Figure 1. Latency and processed tokens versus question count on a 2,201-token state.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;h2 id=&quot;token-accounting&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#token-accounting&quot;&gt;&lt;span&gt;Token accounting&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The observed token usage follows a predictable piecewise model:&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;naive(n)  = n * (state + question)&lt;br /&gt;          = n * 2,278&lt;br /&gt;&lt;br /&gt;shared(n) = ceil(n / 32) * state + n * question&lt;br /&gt;          = ceil(n / 32) * 2,201 + n * 77.5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The shared-prefix path eliminates redundant re-encoding of the 2,201-token state for every question within a batch. At n = 8, this reduces processed tokens from 18,296 to 2,826 (a 6.5x reduction), which directly translates to a 6.7x reduction in wall-clock latency (2.73 s vs. 18.41 s).&lt;/p&gt;
+&lt;h2 id=&quot;marginal-cost-per-question&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#marginal-cost-per-question&quot;&gt;&lt;span&gt;Marginal cost per question&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;While prefix caching provides substantial throughput gains, marginal questions are not free:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Within a batch:&lt;/strong&gt; Adding a question costs approximately 90 ms in the shared path versus approximately 2.3 s in the naive path (a 25x difference). Each suffix must still attend across the 2,201-token cached state, so execution time grows with question count even before re-encoding.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Across batch boundaries:&lt;/strong&gt; The engine enforces a batch ceiling (&lt;code&gt;max_batch=32&lt;/code&gt;) to bound memory during KV-cache broadcast. When crossing batch boundaries (n = 33, 65, 97), the state must be re-encoded for the new batch. This produces step increases in latency at 32, 64, and 128 questions.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;conclusion&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#conclusion&quot;&gt;&lt;span&gt;Conclusion&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The multi-question efficiency of decision models is real and significant: 6.7x speedup at 8 questions, scaling to more than 15x asymptotically as question count increases. However, the performance profile is determined by batch boundaries and attention over the cached prefix rather than zero-marginal-cost scaling. Systems relying on high-volume evaluation batteries should align query batches with the engine&#39;s batch limit.&lt;/p&gt;
+&lt;p&gt;All benchmark scripts, raw JSON outputs, and plotting code are available at &lt;a href=&quot;https://github.com/swopnilnep/strands-decider-benchmark&quot;&gt;swopnilnep/strands-decider-benchmark&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Reaching a localhost AI agent from anywhere, without port forwarding or client apps</title>
     <link href="https://swopnil.com/blog/remote-access-for-your-local-ai-agent/"/>
