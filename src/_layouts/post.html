@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }} · Swopnil Shrestha</title>
+    <meta name="description" content="{{ summary or title }}">
+    <link rel="alternate" type="application/atom+xml" title="Swopnil Shrestha" href="/feed.xml">
     <script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -11,37 +13,26 @@
 </head>
 <body>
     <div class="container site-main">
-        <nav class="site-nav">
-            <div class="nav-links">
-                <a href="/">about</a>
-                <a href="/work">work</a>
-                <a href="/blog" aria-current="page">blog</a>
-            </div>
-            <div class="nav-projects" aria-label="Projects">
-                <a href="https://pho.swopnil.com">pho</a>
-                <a href="https://atlas.swopnil.com">atlas</a>
-            </div>
-            <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                    <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
-                </svg>
-            </button>
-        </nav>
+        {% include "nav.njk" %}
 
         <article class="prose">
             <header class="blog-header page-head">
                 <h1>{{ title }}</h1>
                 <div class="post-meta">
-                    <time datetime="{{ date }}">{{ date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</time>
+                    <time datetime="{{ page.date.toISOString() }}">{{ page.date | readableDate }}</time>
+                    <span aria-hidden="true">·</span> {{ content | readingTime }}
                 </div>
             </header>
+            {%- if summary %}
+            <p class="post-summary">{{ summary }}</p>
+            {%- endif %}
             <div class="blog-content">
                 {{ content | safe }}
             </div>
         </article>
     </div>
 
+    {% include "footer.njk" %}
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <script>

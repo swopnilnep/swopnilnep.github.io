@@ -1,9 +1,13 @@
 ---
 layout: post
-title: "Welcome"
+title: "Hello, World"
 date: 2019-04-01
 ---
 
-`"Hello, World!"`
+The obligatory first post.
 
-This is the obligatory first post. Welcome to my blog.
+```python
+print("Hello, World!")
+```
+
+This is where I'll keep notes on what I'm building and learning: systems, side projects, and the occasional fix for a problem that took longer than it should have.

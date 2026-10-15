@@ -1,100 +1,76 @@
 ---
 layout: post
 title: "Fixing the CSS Integrity Digest Error in Hugo"
+summary: "When a Hugo site loads unstyled with 'Failed to find a valid digest in the integrity attribute', the stylesheet changed after Hugo fingerprinted it. Three common causes, in the order to check them."
 date: 2021-07-11
 ---
 
-## Issue 
+## Symptom
 
-While using Hugo and installing a theme, I encountered this issue. Here are some characteristics. 
+The deployed site renders as unstyled HTML, while `hugo server` looks fine locally. The browser console shows:
 
-While using Hugo, the CSS / styling of the page is not loaded, and the page contains just the plain document, with all the HTML as it is in the source code in the deployed website.
-
-On the hugo server, in a new browser session the content loads properly as well as all the related styles / CSS.
-
-Lastly, when opening the browser console on the deployed website, the following error is found:
-
-```
-Failed to find a valid digest in the 'integrity' attribute for resource '***' with computed SHA-256 integrity '***'. The resource has been blocked.
+```text
+Failed to find a valid digest in the 'integrity' attribute for resource '…/style.min.<hash>.css'
+with computed SHA-256 integrity '…'. The resource has been blocked.
 ```
 
-## Debugging the Issue
+## Why it happens
 
-While researching this issue, for my setup, I noticed there are 3 parts to my pipeline / deployment environment that could have caused this problem. If you use any of these tools for your deployment, you can apply the solution specific to the tools that you are using.
+Many Hugo themes use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) (SRI). At build time, Hugo fingerprints the stylesheet and writes its hash into the page:
 
-### Solution 1: CloudFlare Cache
+```html
+<link rel="stylesheet" href="{{ $style.Permalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+```
 
-Firstly, if you are using CloudFlare as your DNS Provider, this could be a DNS Cache Issue. Although in this case your issue should resolve itself in 24-28 hours automatically. 
+The browser hashes the file it actually downloads and refuses to apply it if the two hashes differ. So this error always means one thing: **the bytes the browser received are not the bytes Hugo hashed.** Something between the build and the browser changed the file.
 
-Nevertheless, you can try the following:
-1. Purge the Cache 
+## Cause 1: a CDN rewrote the file
 
-    * CloudFlare →  Caching Configurations → Purge Cache
-    * If the root domain is your Hugo website, **Purge Everything**
-    * Otherwise, you can selectively purge the subdomains, pages where Hugo is hosted.
+If the site sits behind Cloudflare, its optimizations could modify assets in transit:
 
-2. If your theme relies on JavaScript for some styling, disable **RocketLoader** as well in CloudFlare settings
+- **Auto Minify** (retired by Cloudflare in August 2024) re-minified CSS and JavaScript, which changes the bytes and breaks the hash.
+- **Rocket Loader** rewrites how scripts load.
 
-### Solution 2: Git LF Line Ending
+Disable these optimizations for the site, then purge the cache (**Caching → Configuration → Purge Everything**, or purge just the affected URLs). Cached copies keep failing until they expire or are purged.
 
-Depending on which service you are using to host your code and deploy from, you may have run into an issue with Git, where line endings aren't common across development environments. If you are collaborating with someone or you are using multiple systems to commit your code follow this tutorial.
+## Cause 2: line endings changed in Git
 
-The goal is to automatically use the same character encoding [CRLF](https://en.wikipedia.org/wiki/Newline) for the newline character. If you are using GitHub.com as your code repository, follow this tutorial, otherwise refer to the relevant server [here](https://docs.github.com/en/enterprise-server@3.0/get-started/getting-started-with-git/configuring-git-to-handle-line-endings).
+If the theme or its assets were committed from different operating systems, Git can convert line endings (LF ↔ CRLF). The file in the build environment then differs from the one that was fingerprinted elsewhere. This was the confirmed fix for several people in the [Anatole theme thread](https://github.com/lxndrblz/anatole/issues/114).
 
-Based on your operating system, run the commands:
+Normalize line endings for the repository:
 
-<small>MacOS / Linux</small>
 ```bash
-$ git config --global core.autocrlf input
+# macOS / Linux: convert CRLF to LF on commit, never on checkout
+git config --global core.autocrlf input
 ```
 
-<small>Windows</small>
+```bash
+# Windows: check out CRLF, commit LF
+git config --global core.autocrlf true
 ```
-$ git config --global core.autocrlf true
+
+Then re-normalize the files already in the repository:
+
+```bash
+git add --renormalize .
+git commit -m "Normalize line endings"
 ```
 
-Next, refresh the repository:
+A committed `.gitattributes` file (for example, `* text=auto eol=lf`) is more reliable than per-machine settings, because it travels with the repository. See GitHub's guide on [configuring Git to handle line endings](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings).
 
-1. Start by moving all the files (including the hidden . files) from your current folder to a backup folder
-2. Add and commit the empty folder
+## Cause 3 (last resort): remove the integrity check
 
-    ```
-    $ git add . -u
-    $ git commit -m "Empty folder to prepare for line ending fix"
+If you can't find what is modifying the file, you can remove the `integrity` attribute from the theme's template, usually in `layouts/_default/baseof.html` or a `head` partial:
 
-    ```
-3. Add back all the moved files from your backup folder
-4. Normalize and commit the files
+```html
+<link rel="stylesheet" href="{{ $style.Permalink }}">
+```
 
-    ```
-    $ git add . --renormalize
-    $ git commit -m "Normalize all line endings"
-    ```
-
-
-### Solution 3: Remove Integrity Altogether
-
-The last solution is to remove css file integrity altogether. Although, be warned, you don't want to do this if CORS is a concern for your website.
-
-You can do this by going into the `baseof.html`. Usually the path to this file is:
-
-`layouts/_default/baseof.html`, 
-
-but it may differ based on the theme you are using.
-
-After opening the file, 
-1. Find the reference link to the CSS file. It looks like the following with integrity enabled:
-    ```html
-    <link rel="preload" href="{{ $styles.Permalink }}" integrity="{{ $styles.Data.Integrity }}" as="style" crossorigin="anonymous">
-    ```
-2. Remove Integrity (replace with empty string)
-    ```html
-    <link rel="preload" href="{{ $styles.Permalink }}" integrity="" as="style" crossorigin="anonymous">
-    ```
-3. You may repeat this for all the resources that are not loading. This will ensure that none of the `.css` file in your optimized build requires CORS integrity.
-
+This makes the error go away by turning off the check, not by fixing the cause. SRI matters most for files served from a third-party CDN; for a stylesheet served from your own origin, removing it is a smaller risk. Prefer fixing causes 1 and 2.
 
 ## References
-* [Configuring Git Line Endings | GitHub](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings)
-* [Valid Digest Integrity Issue | GitHub](https://github.com/lxndrblz/anatole/issues/114#issuecomment-828750909)
-* [SHA-256 Integrity Issue](https://github.com/alanorth/hugo-theme-bootstrap4-blog/issues/53)
+
+- [Subresource Integrity, MDN](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
+- [Configuring Git to handle line endings, GitHub Docs](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings)
+- [Valid digest integrity issue, Anatole theme](https://github.com/lxndrblz/anatole/issues/114)
+- [SHA-256 integrity issue, hugo-theme-bootstrap4-blog](https://github.com/alanorth/hugo-theme-bootstrap4-blog/issues/53)

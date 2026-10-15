@@ -1,96 +1,128 @@
 ---
 layout: post
-title: "Free your AI agent from your desk: browser access for $0 and zero app installs"
-date: 2026-10-15
+title: "Reaching a localhost AI agent from anywhere, without port forwarding or client apps"
+date: 2026-09-01T12:00:00Z
 ---
 
-You've got an agent that can read files, run commands, and do real work — but it only lives on the machine in front of you. Walk away and it's unreachable. This post walks through a setup that makes a local agent (and the desktop it runs on) reachable from any browser, on any device — without installing an app on the phone or laptop you're connecting *from*, and without opening a single inbound port on your home network.
+I run a coding agent on my laptop. It holds my repositories, credentials, and tools, and its web UI binds to `127.0.0.1`. That default is correct security, and it also leaves the agent unreachable the moment I step away. I made the agent, and the desktop it runs on, reachable from any browser with no ports opened to the internet, nothing installed on the devices I connect from, and every request authenticated before it reaches the machine.
 
-## The problem
+## Context and requirements
 
-Local dev tools and agent harnesses bind to `127.0.0.1` by default. They're designed to be opened on the same machine, not across the internet. The usual ways to reach them remotely all miss at least one of my requirements:
+The agent runs arbitrary commands with my privileges, so exposing its UI is exposing a shell. Remote access is a security problem before it is a convenience.
 
-- **Port-forwarding** on the router needs a public IP, exposes your network, and is hard to secure well.
-- **A VPN** is solid but wants a client app on every device — exactly what I didn't want.
-- **Moving the agent to a hosted box** solves reachability but loses "run it on my own machine, with my files and my tools."
+- **Browser-only clients.** A phone or borrowed laptop needs nothing beyond a browser.
+- **Authentication before the origin.** Unauthenticated requests never reach the laptop, not even the agent's login page.
+- **No inbound exposure.** No port-forwarding, no public IP; the services I add listen on loopback only.
+- **Remote desktop.** Some workflows need the full GUI, not just the web UI.
+- **Explicit lifecycle.** I start and stop the stack deliberately; it is not a login daemon.
 
-What I actually wanted was three things, together:
+Non-goals: multi-user access, high availability, and use while the laptop is asleep or offline.
 
-1. **Browser-only access** — no installs on the phone or second computer.
-2. **Real authentication** — not a URL that's only "secure" because it's long.
-3. **Remote desktop** — see and control the actual desktop, not just one web UI.
+## Design
 
-## The high-level design
-
-Two things need to get out: the agent's web UI and the desktop itself. Both are ordinary local services — a web server on a loopback port, and the operating system's built-in screen-sharing server. The trick is to connect them to the internet with an **outbound-only tunnel**, then put an **identity layer in front of everything** so unauthenticated traffic never reaches the machine.
+Three layers: an outbound tunnel from the laptop to an edge network, an identity gate at that edge, and local services that stay on loopback.
 
 ```mermaid
 flowchart LR
-    B["Browser<br/>phone / laptop"] -->|"https"| E["Cloudflare edge"]
-    E --> A["Access login<br/>one-time code to you@example.com"]
-    A --> T["Tunnel<br/>(outbound-only, no open ports)"]
-    T --> AG["Agent web UI<br/>127.0.0.1:3000"]
-    T --> NV["noVNC → Screen Sharing VNC<br/>127.0.0.1:6080 → 5900"]
+    B["Browser<br/>(phone or laptop)"] -->|HTTPS| E["Edge network"]
+    subgraph Edge
+        E --> A["Identity gate<br/>(per-hostname policy)"]
+    end
+    A -->|"existing outbound connection"| C["Tunnel connector<br/>(on the laptop)"]
+    subgraph Laptop
+        C --> AG["Agent web UI<br/>127.0.0.1:3000"]
+        C --> WS["WebSocket→VNC bridge<br/>127.0.0.1:6080"]
+        WS --> VNC["OS screen sharing<br/>:5900 (all interfaces)"]
+    end
 ```
 
-Three moving parts:
+- **Tunnel connector.** Opens outbound connections to the edge, which routes each hostname down to a local service. Nothing accepts inbound traffic.
+- **Identity gate.** Each hostname has an edge access policy. Requests without a session are redirected to a login flow and only forwarded once it passes.
+- **Local services.** The agent's web UI on `127.0.0.1:3000`, and a WebSocket-to-VNC bridge on `127.0.0.1:6080` in front of the built-in screen-sharing server.
 
-1. **The tunnel** runs on the laptop and *dials out* to a cloud edge. Inbound traffic arrives at the edge, is relayed down that already-open outbound connection, and lands on the local service. No router changes, no public IP, no inbound firewall rules.
+The laptop sees nothing until the identity check succeeds:
 
-2. **The identity layer** sits at the edge. Before anything is relayed, the requester has to prove who they are — here, a one-time code emailed to an address only you control.
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant E as Edge + identity gate
+    participant C as Tunnel connector
+    participant S as Local service
+    B->>E: GET https://agent.example.com
+    E-->>B: 302 → login (no session)
+    B->>E: Email one-time code
+    E-->>B: Session cookie
+    B->>E: GET https://agent.example.com
+    E->>C: Forward over existing outbound connection
+    C->>S: http://127.0.0.1:3000
+    S-->>C: Response
+    C-->>E: Response
+    E-->>B: Response
+```
 
-3. **The desktop bridge** converts the OS's native screen-sharing protocol into something a browser understands, so "see and control the desktop" becomes just another tab.
+<figure>
+  <img src="/img/blog/remote-access-login.png" alt="A login page asking for an email address to send a one-time code to." width="1000" height="692" loading="lazy">
+  <figcaption>The identity gate. A requestor logs in before anything is forwarded to the laptop.</figcaption>
+</figure>
 
-The whole routing table fits in one config file:
+Routing is one declarative table:
 
 ```yaml
-# one tunnel, two hostnames, two local services
 ingress:
-  - hostname: agent.yourdomain.com
+  - hostname: agent.example.com
     service: http://127.0.0.1:3000
-  - hostname: desk.yourdomain.com
+  - hostname: desk.example.com
     service: http://127.0.0.1:6080
-  - service: http_status:404
+  - service: http_status:404   # anything not listed above fails closed
 ```
 
-## What I chose, and why
+The catch-all matters: a hostname pointed at the tunnel by mistake returns `404` instead of reaching a service.
 
-### Tunnel: Cloudflare Tunnel (outbound-only) over ngrok, Tailscale, or port-forwarding
+## Decisions
 
-The hard requirement was "no client installs," which rules out a VPN like Tailscale (great tool, but it wants an app on every device). Raw port-forwarding has no app either, but you're directly exposing a service with no identity layer in front — and you need a public IP. ngrok is the closest cousin: it also gives a public URL from an outbound connection, but its free tier historically limited how many tunnels you could run, made custom hostnames a paid feature, and left auth as a separate thing to bolt on.
+| Decision | Chosen | Alternatives considered | Why |
+|---|---|---|---|
+| Transport | Cloudflare Tunnel | Port-forwarding, Tailscale (incl. Funnel), ngrok | Outbound-only; tunnels, DNS, and policies live in one account with one CLI; WebSockets pass through. Costs a domain, and Cloudflare terminates TLS at its edge. |
+| Authentication | Cloudflare Access, email one-time code | App-level password, IP allow-list, VPN | The check happens before a request reaches the machine; sessions expire and revoke centrally. No shared password, so your email becomes the root of trust. |
+| Remote desktop | Built-in screen sharing (VNC) + noVNC | Guacamole, MeshCentral, RustDesk | OS-native, so no screen-recording permission for a third party, with a tiny stack. VNC auth alone is weak, and macOS ignores remote resizing. |
+| Lifecycle | On-demand start/stop script | launchd / systemd | Exposure stays a deliberate choice, not a permanent property of the machine. The cost is that a crash stays down until I notice. |
 
-Cloudflare Tunnel won because:
+The agent's own host allow-list stays enabled behind all of this as a second layer.
 
-- the client is a single binary already running on the laptop,
-- one connection can fan out to **multiple hostnames → multiple local services**,
-- WebSockets pass through (required for the desktop bridge),
-- and the **Access** identity layer is a sibling product, not a separate integration.
+## Security posture
 
-Tradeoff: you need a domain (any domain you own, pointed at Cloudflare). That's the one real requirement.
+- The agent and the bridge bind to `127.0.0.1`; from the internet, the tunnel is the only path in.
+- macOS Screen Sharing listens on port 5900 on all interfaces and cannot be restricted to loopback. It is reachable on the local network but not the internet. I limit it to my account, rely on Apple Remote Desktop authentication, and keep the firewall on.
+- Every routed hostname has a policy; unrouted hostnames fail closed at the connector.
+- The tunnel credential lives in a mode-`0600` file and is passed with `--token-file`, so it never appears in process listings or shell history.
 
-### Auth: Cloudflare Access (email one-time code) over a shared password or an IP allowlist
+Residual risks: compromise of the email account, reliance on Cloudflare as an intermediary, the Screen Sharing listener on shared Wi-Fi, and an unlocked desktop anyone with physical access can use. Hardening I still want: validate the Access token and audience at the connector so an unpolicied hostname fails closed, and shorten the desktop session duration.
 
-A shared password is a static secret — it can leak and can't be revoked per-device. An IP allowlist breaks the moment you're on cellular. Access gives per-user policies ("only this email"), a login page that works in any browser, and sessions that expire.
+## Running it unattended
 
-Tradeoff: Access offers email one-time codes or a federated identity provider (Google, GitHub, etc.) — there's no plain "username + password" field. If you specifically want a typed password, add one at the app layer too; that's belt-and-suspenders, not a replacement.
+On demand is the default, but three things let it run unattended: the laptop must not sleep (`sudo pmset -a sleep 0 displaysleep 0 disksleep 0`), it must stay logged in with auto-lock off so the desktop shows instead of the lock screen, and the lid stays open (clamshell with an external display also works). To start the stack on boot, load the same script under launchd or systemd with `RunAtLoad`, or keep `caffeinate` in a login item. The trade-off is unchanged: an always-on, always-unlocked desktop is a bigger target, so leave it up only where the machine is physically secure.
 
-### Desktop: built-in Screen Sharing (VNC) + noVNC over Guacamole, MeshCentral, or RustDesk
+## What broke along the way
 
-The OS's own screen-sharing server captures the screen with no per-app screen-recording permission prompts. noVNC is a static web app that speaks VNC in the browser. That pair was the smallest thing that satisfied "see and control the desktop in a tab."
+1. **The agent rejected the public hostname.** Its web server validates `Host` and `Origin` headers, a DNS-rebinding defense, and answered `Untrusted request`. Rewriting `Host` at the connector would have broken the UI's own same-origin checks. The fix was to add the public hostname to the application's allow-list.
+2. **Enabling Access through the API left no login method.** The dashboard adds a one-time-code provider for you; the API does not. The login page reported "no login methods available" until I created it explicitly.
+3. **noVNC asked for a username.** macOS advertises Apple Remote Desktop authentication first, so noVNC expects the macOS account, not the VNC password. I briefly patched the client to prefer VNC auth, then reverted it to keep the checkout upstream-clean.
+4. **The desktop cannot be resized.** macOS ignores client resize requests. Scale client-side in noVNC (`resize=scale`) or lower the display resolution.
+5. **Restarting the agent from inside the agent ends the session.** The restart shell is a child of the process it kills. Change the agent's server from a separate terminal.
+6. **launchd services do not inherit the shell's `PATH`.** Homebrew binaries need absolute paths, one more reason to use an explicit script.
 
-Honest tradeoffs:
+<figure>
+  <img src="/img/blog/remote-access-novnc-credentials.png" alt="The noVNC client prompting for a username and password to connect to the remote desktop." width="700" height="572" loading="lazy">
+  <figcaption>noVNC asks for a username because it negotiates Apple Remote Desktop authentication, not plain VNC.</figcaption>
+</figure>
 
-- **Guacamole** is the "proper" gateway — VNC/RDP/SSH in one web UI with user accounts — but it's a heavier stack to run and secure.
-- **MeshCentral** is excellent and self-hostable, but brings its own agent; on macOS that means a screen-capture permission dance I'd rather avoid.
-- **RustDesk** needs a relay, and the browser path still needs a web-client setup.
-- macOS VNC ignores client-requested resizes, so "make the desktop smaller" has to happen in noVNC (local scaling) or by lowering the display resolution — a quirk worth knowing before you squint at your phone.
+## Result
 
-### The 24/7 part
+`agent.example.com` and `desk.example.com` resolve to the edge. After an email one-time code, they reach the agent UI and the desktop. The laptop runs three processes, the tunnel connector, the VNC bridge, and the agent, and accepts no inbound connections from the internet.
 
-None of this helps if the laptop sleeps. The last ingredient is boring but essential: disable sleep, disable auto-lock so the desktop is actually visible, and run the three local processes under a tiny start/stop script rather than as login daemons — reachable when I say so, not silently running forever.
+<figure>
+  <img src="/img/blog/remote-access-phone.png" alt="The agent's web UI open in a phone browser." width="320" height="714" loading="lazy">
+  <figcaption>The agent's web UI on a phone, after the one-time code.</figcaption>
+</figure>
 
-## The result
-
-From any browser, on any device: `agent.yourdomain.com` opens the agent after an email one-time code, and `desk.yourdomain.com` opens the actual desktop. Nothing is installed on the devices you connect from. The only things running on the laptop are an outbound tunnel, a small web bridge, and the agent you already had.
-
-For the copy-paste version, see the quick-start companion post.
+The step-by-step setup, with verification and teardown, is in the [companion guide](/blog/remote-access-quick-setup/).
