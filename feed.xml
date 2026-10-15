@@ -356,6 +356,83 @@
 </content>
   </entry>
   <entry>
+    <title>Agent workflows are distributed systems in a different paradigm</title>
+    <link href="https://swopnil.com/blog/llm-engineering-is-distributed-systems-engineering/"/>
+    <updated>2025-11-18T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/llm-engineering-is-distributed-systems-engineering/</id>
+    <content type="html">&lt;p&gt;Any system built from independent parts has to answer the same questions. How do the parts talk to each other? What happens when one fails? How do you know what actually happened?&lt;/p&gt;
+&lt;p&gt;A distributed system is a set of predictable workers talking over an unreliable network. An agent workflow is a set of unpredictable workers talking over a reliable network. The questions stay the same, and so do most of the answers.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Principle&lt;/th&gt;
+&lt;th&gt;Distributed systems&lt;/th&gt;
+&lt;th&gt;Agent workflows&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Observability&lt;/td&gt;
+&lt;td&gt;CloudWatch Logs and metrics, X-Ray traces&lt;/td&gt;
+&lt;td&gt;Run traces: prompts, context loaded, tool calls, outputs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Contracts&lt;/td&gt;
+&lt;td&gt;API schemas, API Gateway request validation&lt;/td&gt;
+&lt;td&gt;Tool schemas and structured output checked before use&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;State&lt;/td&gt;
+&lt;td&gt;DynamoDB as the source of truth, TTL for old data&lt;/td&gt;
+&lt;td&gt;Small context, real state read from systems, stale docs expired&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Retries&lt;/td&gt;
+&lt;td&gt;SQS redelivery, idempotency keys&lt;/td&gt;
+&lt;td&gt;Safe tool retries, check before you create&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Limits&lt;/td&gt;
+&lt;td&gt;Lambda timeouts, Step Functions max attempts, dead-letter queues&lt;/td&gt;
+&lt;td&gt;Step limits, attempt limits, hand off to a human&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Verification&lt;/td&gt;
+&lt;td&gt;Health checks, CloudWatch Synthetics canaries&lt;/td&gt;
+&lt;td&gt;Tests, validators, and a review step after the agent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Permissions&lt;/td&gt;
+&lt;td&gt;IAM least privilege, security groups&lt;/td&gt;
+&lt;td&gt;Read-only access, sandboxes, approval before changes&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Testing&lt;/td&gt;
+&lt;td&gt;Integration tests, canary deployments&lt;/td&gt;
+&lt;td&gt;Eval sets of real tasks, rerun on every prompt change&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&quot;observability&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#observability&quot;&gt;&lt;span&gt;Observability&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In a distributed system, CloudWatch Logs and X-Ray let you follow a request across services and see where it slowed down or failed. An agent needs the same trail. Record the prompt, the context it loaded, every tool call and result, and the final output for each run. When an agent makes a bad change, the trace shows whether it had the wrong context, picked the wrong tool, or misread a result.&lt;/p&gt;
+&lt;h2 id=&quot;contracts&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#contracts&quot;&gt;&lt;span&gt;Contracts&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Services agree on request and response shapes, and API Gateway can reject a malformed request before it reaches your code. Agents need the same agreement. Define each tool with a schema, ask for structured output, and validate it before anything downstream uses it.&lt;/p&gt;
+&lt;h2 id=&quot;state&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#state&quot;&gt;&lt;span&gt;State&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;A service keeps its truth in a database like DynamoDB and expires old records with TTL. An agent&#39;s equivalent is its context. Keep it small, load what the current task needs, and remove outdated documentation, because an agent will follow a stale runbook as confidently as a current one. When you need to know what happened, read the real system, not the chat history.&lt;/p&gt;
+&lt;h2 id=&quot;retries&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#retries&quot;&gt;&lt;span&gt;Retries&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;SQS can deliver a message more than once, so consumers use idempotency keys to avoid doing the same work twice. Agents retry too. Before a tool creates a pull request, a ticket, or a deployment, check whether it already exists.&lt;/p&gt;
+&lt;h2 id=&quot;limits&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#limits&quot;&gt;&lt;span&gt;Limits&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Lambda functions have timeouts, and Step Functions caps retry attempts and can route failures to a dead-letter queue. Agents can loop on a failing step indefinitely. Cap the number of steps and attempts, and when the cap is reached, stop and hand the task to a person.&lt;/p&gt;
+&lt;h2 id=&quot;verification&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#verification&quot;&gt;&lt;span&gt;Verification&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Load balancers run health checks, and CloudWatch Synthetics canaries exercise an endpoint to confirm it really works. An agent can report success when a step failed. Run the tests, validate the output, or add a review step before you accept the result.&lt;/p&gt;
+&lt;h2 id=&quot;permissions&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#permissions&quot;&gt;&lt;span&gt;Permissions&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;IAM roles give each service only the access it needs. Give agents the same treatment: read-only access by default, a sandbox for running code, and an approval step before anything that writes to production, sends a message, or spends money. This also limits the damage from malicious input that tries to steer the agent.&lt;/p&gt;
+&lt;h2 id=&quot;testing&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#testing&quot;&gt;&lt;span&gt;Testing&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Integration tests and canary deployments catch regressions before customers see them. For agents, keep a set of real tasks with known good answers and rerun it every time you change a prompt, a tool, or the context.&lt;/p&gt;
+&lt;p&gt;The model is one component in a larger system. The engineering practices that keep distributed systems reliable are the same ones that keep agent workflows reliable.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
     <title>Homebrew: Remove a Formula and Its Unused Dependencies</title>
     <link href="https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/"/>
     <updated>2021-10-10T00:00:00Z</updated>
