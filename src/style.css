@@ -226,7 +226,7 @@ a:focus-visible, button:focus-visible {
 
 /* Prose: readable measure for text pages */
 .prose {
-  max-width: 44rem;
+  max-width: 60rem;
   color: var(--text-body);
 }
 .prose :is(h1, h2, h3, h4, h5, h6, strong) { color: var(--text); }
@@ -412,7 +412,7 @@ a:focus-visible, button:focus-visible {
 }
 .home-card {
   width: 100%;
-  max-width: 44rem;
+  max-width: 60rem;
 }
 .home-card h1 {
   font-weight: 600;
