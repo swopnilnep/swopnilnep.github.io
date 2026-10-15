@@ -17,6 +17,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://swopnil.com/blog/building-a-toy-vpn/</loc>
+    <lastmod>2020-04-20T00:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://swopnil.com/blog/getting-started-with-Hugo-sites/</loc>
     <lastmod>2020-10-16T00:00:00Z</lastmod>
     <changefreq>monthly</changefreq>
@@ -31,6 +37,18 @@
   <url>
     <loc>https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/</loc>
     <lastmod>2021-10-10T00:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://swopnil.com/blog/remote-access-quick-setup/</loc>
+    <lastmod>2026-09-01T00:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://swopnil.com/blog/remote-access-for-your-local-ai-agent/</loc>
+    <lastmod>2026-09-01T12:00:00Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

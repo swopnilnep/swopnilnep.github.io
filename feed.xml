@@ -4,57 +4,275 @@
   <subtitle>Software Engineer</subtitle>
   <link href="https://swopnil.com/feed.xml" rel="self"/>
   <link href="https://swopnil.com/"/>
-  <updated>2021-10-10T00:00:00Z</updated>
+  <updated>2026-09-01T12:00:00Z</updated>
   <id>https://swopnil.com/</id>
   <author>
     <name>Swopnil Shrestha</name>
     <email>hello@swopnil.com</email>
   </author>
   <entry>
-    <title>Homebrew: Remove All Dependencies for a Package</title>
+    <title>Reaching a localhost AI agent from anywhere, without port forwarding or client apps</title>
+    <link href="https://swopnil.com/blog/remote-access-for-your-local-ai-agent/"/>
+    <updated>2026-09-01T12:00:00Z</updated>
+    <id>https://swopnil.com/blog/remote-access-for-your-local-ai-agent/</id>
+    <content type="html">&lt;p&gt;I run a coding agent on my laptop. It holds my repositories, credentials, and tools, and its web UI binds to &lt;code&gt;127.0.0.1&lt;/code&gt;. That default is correct security, and it also leaves the agent unreachable the moment I step away. I made the agent, and the desktop it runs on, reachable from any browser with no ports opened to the internet, nothing installed on the devices I connect from, and every request authenticated before it reaches the machine.&lt;/p&gt;
+&lt;h2 id=&quot;context-and-requirements&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#context-and-requirements&quot;&gt;&lt;span&gt;Context and requirements&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The agent runs arbitrary commands with my privileges, so exposing its UI is exposing a shell. Remote access is a security problem before it is a convenience.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Browser-only clients.&lt;/strong&gt; A phone or borrowed laptop needs nothing beyond a browser.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Authentication before the origin.&lt;/strong&gt; Unauthenticated requests never reach the laptop, not even the agent&#39;s login page.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No inbound exposure.&lt;/strong&gt; No port-forwarding, no public IP; the services I add listen on loopback only.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Remote desktop.&lt;/strong&gt; Some workflows need the full GUI, not just the web UI.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Explicit lifecycle.&lt;/strong&gt; I start and stop the stack deliberately; it is not a login daemon.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Non-goals: multi-user access, high availability, and use while the laptop is asleep or offline.&lt;/p&gt;
+&lt;h2 id=&quot;design&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#design&quot;&gt;&lt;span&gt;Design&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Three layers: an outbound tunnel from the laptop to an edge network, an identity gate at that edge, and local services that stay on loopback.&lt;/p&gt;
+&lt;pre class=&quot;mermaid&quot;&gt;flowchart LR
+    B[&amp;quot;Browser&amp;lt;br/&amp;gt;(phone or laptop)&amp;quot;] --&amp;gt;|HTTPS| E[&amp;quot;Edge network&amp;quot;]
+    subgraph Edge
+        E --&amp;gt; A[&amp;quot;Identity gate&amp;lt;br/&amp;gt;(per-hostname policy)&amp;quot;]
+    end
+    A --&amp;gt;|&amp;quot;existing outbound connection&amp;quot;| C[&amp;quot;Tunnel connector&amp;lt;br/&amp;gt;(on the laptop)&amp;quot;]
+    subgraph Laptop
+        C --&amp;gt; AG[&amp;quot;Agent web UI&amp;lt;br/&amp;gt;127.0.0.1:3000&amp;quot;]
+        C --&amp;gt; WS[&amp;quot;WebSocket→VNC bridge&amp;lt;br/&amp;gt;127.0.0.1:6080&amp;quot;]
+        WS --&amp;gt; VNC[&amp;quot;OS screen sharing&amp;lt;br/&amp;gt;:5900 (all interfaces)&amp;quot;]
+    end
+&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Tunnel connector.&lt;/strong&gt; Opens outbound connections to the edge, which routes each hostname down to a local service. Nothing accepts inbound traffic.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Identity gate.&lt;/strong&gt; Each hostname has an edge access policy. Requests without a session are redirected to a login flow and only forwarded once it passes.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Local services.&lt;/strong&gt; The agent&#39;s web UI on &lt;code&gt;127.0.0.1:3000&lt;/code&gt;, and a WebSocket-to-VNC bridge on &lt;code&gt;127.0.0.1:6080&lt;/code&gt; in front of the built-in screen-sharing server.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The laptop sees nothing until the identity check succeeds:&lt;/p&gt;
+&lt;pre class=&quot;mermaid&quot;&gt;sequenceDiagram
+    participant B as Browser
+    participant E as Edge + identity gate
+    participant C as Tunnel connector
+    participant S as Local service
+    B-&amp;gt;&amp;gt;E: GET https://agent.example.com
+    E--&amp;gt;&amp;gt;B: 302 → login (no session)
+    B-&amp;gt;&amp;gt;E: Email one-time code
+    E--&amp;gt;&amp;gt;B: Session cookie
+    B-&amp;gt;&amp;gt;E: GET https://agent.example.com
+    E-&amp;gt;&amp;gt;C: Forward over existing outbound connection
+    C-&amp;gt;&amp;gt;S: http://127.0.0.1:3000
+    S--&amp;gt;&amp;gt;C: Response
+    C--&amp;gt;&amp;gt;E: Response
+    E--&amp;gt;&amp;gt;B: Response
+&lt;/pre&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://swopnil.com/img/blog/remote-access-login.png&quot; alt=&quot;A login page asking for an email address to send a one-time code to.&quot; width=&quot;1000&quot; height=&quot;692&quot; loading=&quot;lazy&quot; /&gt;
+  &lt;figcaption&gt;The identity gate. A requestor logs in before anything is forwarded to the laptop.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;Routing is one declarative table:&lt;/p&gt;
+&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;ingress&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; agent.example.com&lt;br /&gt;    &lt;span class=&quot;token key atrule&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; http&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;//127.0.0.1&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;3000&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; desk.example.com&lt;br /&gt;    &lt;span class=&quot;token key atrule&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; http&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;//127.0.0.1&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;6080&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; http_status&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;404&lt;/span&gt;   &lt;span class=&quot;token comment&quot;&gt;# anything not listed above fails closed&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The catch-all matters: a hostname pointed at the tunnel by mistake returns &lt;code&gt;404&lt;/code&gt; instead of reaching a service.&lt;/p&gt;
+&lt;h2 id=&quot;decisions&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#decisions&quot;&gt;&lt;span&gt;Decisions&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Decision&lt;/th&gt;
+&lt;th&gt;Chosen&lt;/th&gt;
+&lt;th&gt;Alternatives considered&lt;/th&gt;
+&lt;th&gt;Why&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Transport&lt;/td&gt;
+&lt;td&gt;Cloudflare Tunnel&lt;/td&gt;
+&lt;td&gt;Port-forwarding, Tailscale (incl. Funnel), ngrok&lt;/td&gt;
+&lt;td&gt;Outbound-only; tunnels, DNS, and policies live in one account with one CLI; WebSockets pass through. Costs a domain, and Cloudflare terminates TLS at its edge.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Authentication&lt;/td&gt;
+&lt;td&gt;Cloudflare Access, email one-time code&lt;/td&gt;
+&lt;td&gt;App-level password, IP allow-list, VPN&lt;/td&gt;
+&lt;td&gt;The check happens before a request reaches the machine; sessions expire and revoke centrally. No shared password, so your email becomes the root of trust.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Remote desktop&lt;/td&gt;
+&lt;td&gt;Built-in screen sharing (VNC) + noVNC&lt;/td&gt;
+&lt;td&gt;Guacamole, MeshCentral, RustDesk&lt;/td&gt;
+&lt;td&gt;OS-native, so no screen-recording permission for a third party, with a tiny stack. VNC auth alone is weak, and macOS ignores remote resizing.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Lifecycle&lt;/td&gt;
+&lt;td&gt;On-demand start/stop script&lt;/td&gt;
+&lt;td&gt;launchd / systemd&lt;/td&gt;
+&lt;td&gt;Exposure stays a deliberate choice, not a permanent property of the machine. The cost is that a crash stays down until I notice.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The agent&#39;s own host allow-list stays enabled behind all of this as a second layer.&lt;/p&gt;
+&lt;h2 id=&quot;security-posture&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#security-posture&quot;&gt;&lt;span&gt;Security posture&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The agent and the bridge bind to &lt;code&gt;127.0.0.1&lt;/code&gt;; from the internet, the tunnel is the only path in.&lt;/li&gt;
+&lt;li&gt;macOS Screen Sharing listens on port 5900 on all interfaces and cannot be restricted to loopback. It is reachable on the local network but not the internet. I limit it to my account, rely on Apple Remote Desktop authentication, and keep the firewall on.&lt;/li&gt;
+&lt;li&gt;Every routed hostname has a policy; unrouted hostnames fail closed at the connector.&lt;/li&gt;
+&lt;li&gt;The tunnel credential lives in a mode-&lt;code&gt;0600&lt;/code&gt; file and is passed with &lt;code&gt;--token-file&lt;/code&gt;, so it never appears in process listings or shell history.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Residual risks: compromise of the email account, reliance on Cloudflare as an intermediary, the Screen Sharing listener on shared Wi-Fi, and an unlocked desktop anyone with physical access can use. Hardening I still want: validate the Access token and audience at the connector so an unpolicied hostname fails closed, and shorten the desktop session duration.&lt;/p&gt;
+&lt;h2 id=&quot;running-it-unattended&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#running-it-unattended&quot;&gt;&lt;span&gt;Running it unattended&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;On demand is the default, but three things let it run unattended: the laptop must not sleep (&lt;code&gt;sudo pmset -a sleep 0 displaysleep 0 disksleep 0&lt;/code&gt;), it must stay logged in with auto-lock off so the desktop shows instead of the lock screen, and the lid stays open (clamshell with an external display also works). To start the stack on boot, load the same script under launchd or systemd with &lt;code&gt;RunAtLoad&lt;/code&gt;, or keep &lt;code&gt;caffeinate&lt;/code&gt; in a login item. The trade-off is unchanged: an always-on, always-unlocked desktop is a bigger target, so leave it up only where the machine is physically secure.&lt;/p&gt;
+&lt;h2 id=&quot;what-broke-along-the-way&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#what-broke-along-the-way&quot;&gt;&lt;span&gt;What broke along the way&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;The agent rejected the public hostname.&lt;/strong&gt; Its web server validates &lt;code&gt;Host&lt;/code&gt; and &lt;code&gt;Origin&lt;/code&gt; headers, a DNS-rebinding defense, and answered &lt;code&gt;Untrusted request&lt;/code&gt;. Rewriting &lt;code&gt;Host&lt;/code&gt; at the connector would have broken the UI&#39;s own same-origin checks. The fix was to add the public hostname to the application&#39;s allow-list.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Enabling Access through the API left no login method.&lt;/strong&gt; The dashboard adds a one-time-code provider for you; the API does not. The login page reported &amp;quot;no login methods available&amp;quot; until I created it explicitly.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;noVNC asked for a username.&lt;/strong&gt; macOS advertises Apple Remote Desktop authentication first, so noVNC expects the macOS account, not the VNC password. I briefly patched the client to prefer VNC auth, then reverted it to keep the checkout upstream-clean.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The desktop cannot be resized.&lt;/strong&gt; macOS ignores client resize requests. Scale client-side in noVNC (&lt;code&gt;resize=scale&lt;/code&gt;) or lower the display resolution.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Restarting the agent from inside the agent ends the session.&lt;/strong&gt; The restart shell is a child of the process it kills. Change the agent&#39;s server from a separate terminal.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;launchd services do not inherit the shell&#39;s &lt;code&gt;PATH&lt;/code&gt;.&lt;/strong&gt; Homebrew binaries need absolute paths, one more reason to use an explicit script.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://swopnil.com/img/blog/remote-access-novnc-credentials.png&quot; alt=&quot;The noVNC client prompting for a username and password to connect to the remote desktop.&quot; width=&quot;700&quot; height=&quot;572&quot; loading=&quot;lazy&quot; /&gt;
+  &lt;figcaption&gt;noVNC asks for a username because it negotiates Apple Remote Desktop authentication, not plain VNC.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;h2 id=&quot;result&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#result&quot;&gt;&lt;span&gt;Result&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;agent.example.com&lt;/code&gt; and &lt;code&gt;desk.example.com&lt;/code&gt; resolve to the edge. After an email one-time code, they reach the agent UI and the desktop. The laptop runs three processes, the tunnel connector, the VNC bridge, and the agent, and accepts no inbound connections from the internet.&lt;/p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://swopnil.com/img/blog/remote-access-phone.png&quot; alt=&quot;The agent&#39;s web UI open in a phone browser.&quot; width=&quot;320&quot; height=&quot;714&quot; loading=&quot;lazy&quot; /&gt;
+  &lt;figcaption&gt;The agent&#39;s web UI on a phone, after the one-time code.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;The step-by-step setup, with verification and teardown, is in the &lt;a href=&quot;https://swopnil.com/blog/remote-access-quick-setup/&quot;&gt;companion guide&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Browser access to a local agent and desktop with Cloudflare Tunnel and Access</title>
+    <link href="https://swopnil.com/blog/remote-access-quick-setup/"/>
+    <updated>2026-09-01T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/remote-access-quick-setup/</id>
+    <content type="html">&lt;p&gt;This is the operational companion to &lt;a href=&quot;https://swopnil.com/blog/remote-access-for-your-local-ai-agent/&quot;&gt;Reaching a localhost AI agent from anywhere&lt;/a&gt;. It covers prerequisites, ordered steps with a verification after each, troubleshooting, and teardown.&lt;/p&gt;
+&lt;p&gt;Placeholders: &lt;code&gt;example.com&lt;/code&gt; for your domain, &lt;code&gt;agent.example.com&lt;/code&gt; and &lt;code&gt;desk.example.com&lt;/code&gt; for the two hostnames, &lt;code&gt;you@example.com&lt;/code&gt; for your login email, and &lt;code&gt;127.0.0.1:3000&lt;/code&gt; for the agent&#39;s web UI.&lt;/p&gt;
+&lt;h2 id=&quot;prerequisites&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#prerequisites&quot;&gt;&lt;span&gt;Prerequisites&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A domain whose DNS is active on Cloudflare.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cloudflared&lt;/code&gt; on the laptop (&lt;code&gt;brew install cloudflared&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;The Cloudflare CLI, &lt;code&gt;cf&lt;/code&gt; (&lt;code&gt;npm install --global cf&lt;/code&gt;; requires Node.js 22.18 or later). It was in beta at the time of writing, so check &lt;code&gt;--help&lt;/code&gt; if a flag has changed.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;jq&lt;/code&gt;, for parsing CLI output.&lt;/li&gt;
+&lt;li&gt;An agent web UI bound to &lt;code&gt;127.0.0.1:3000&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;macOS, for the remote-desktop portion.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Ordering matters.&lt;/strong&gt; Create the access policies before the tunnel connector runs, so there is never a window in which a hostname is routable but unauthenticated.&lt;/p&gt;
+&lt;h2 id=&quot;1.-authenticate-the-cli&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#1.-authenticate-the-cli&quot;&gt;&lt;span&gt;1. Authenticate the CLI&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;cf auth login                       &lt;span class=&quot;token comment&quot;&gt;# browser-based device authorization&lt;/span&gt;&lt;br /&gt;cf zones list &lt;span class=&quot;token parameter variable&quot;&gt;--name&lt;/span&gt; example.com    &lt;span class=&quot;token comment&quot;&gt;# confirm the zone exists and is active&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;2.-enable-access-and-a-login-method&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#2.-enable-access-and-a-login-method&quot;&gt;&lt;span&gt;2. Enable Access and a login method&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Creating the Zero Trust organization through the API does not add a login method, so add the one-time-code identity provider explicitly.&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;cf zero-trust organization create &lt;span class=&quot;token parameter variable&quot;&gt;--body&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;{&quot;name&quot;:&quot;personal&quot;}&#39;&lt;/span&gt;&lt;br /&gt;cf zero-trust identity-providers create &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token parameter variable&quot;&gt;--body&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;{&quot;name&quot;:&quot;Email OTP&quot;,&quot;type&quot;:&quot;onetimepin&quot;,&quot;config&quot;:{}}&#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Verify: &lt;code&gt;cf zero-trust identity-providers list&lt;/code&gt; shows a provider of type &lt;code&gt;onetimepin&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;3.-create-an-access-policy-per-hostname&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#3.-create-an-access-policy-per-hostname&quot;&gt;&lt;span&gt;3. Create an access policy per hostname&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;token for-or-select variable&quot;&gt;host&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; agent desk&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;do&lt;/span&gt;&lt;br /&gt;  cf zero-trust access applications create &lt;span class=&quot;token parameter variable&quot;&gt;--body&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;jq &lt;span class=&quot;token parameter variable&quot;&gt;-nc&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;--arg&lt;/span&gt; d &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$host&lt;/span&gt;.example.com&quot;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;{&lt;br /&gt;    name: $d, domain: $d, type: &quot;self_hosted&quot;, session_duration: &quot;24h&quot;,&lt;br /&gt;    policies: [{ name: &quot;owner&quot;, decision: &quot;allow&quot;,&lt;br /&gt;                 include: [{ email: { email: &quot;you@example.com&quot; } }] }]&lt;br /&gt;  }&#39;&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;done&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;4.-create-the-tunnel%2C-routes%2C-and-dns-records&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#4.-create-the-tunnel%2C-routes%2C-and-dns-records&quot;&gt;&lt;span&gt;4. Create the tunnel, routes, and DNS records&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token assign-left variable&quot;&gt;TUNNEL_ID&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;cf tunnels create &lt;span class=&quot;token parameter variable&quot;&gt;--name&lt;/span&gt; laptop --config-source cloudflare &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; jq &lt;span class=&quot;token parameter variable&quot;&gt;-r&lt;/span&gt; .id&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;cf tunnels config update &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$TUNNEL_ID&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;--body&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;{&lt;br /&gt;  &quot;config&quot;: { &quot;ingress&quot;: [&lt;br /&gt;    { &quot;hostname&quot;: &quot;agent.example.com&quot;, &quot;service&quot;: &quot;http://127.0.0.1:3000&quot; },&lt;br /&gt;    { &quot;hostname&quot;: &quot;desk.example.com&quot;,  &quot;service&quot;: &quot;http://127.0.0.1:6080&quot; },&lt;br /&gt;    { &quot;service&quot;: &quot;http_status:404&quot; }&lt;br /&gt;  ]}&lt;br /&gt;}&#39;&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;token for-or-select variable&quot;&gt;host&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; agent desk&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;do&lt;/span&gt;&lt;br /&gt;  cf dns records create &lt;span class=&quot;token parameter variable&quot;&gt;--zone&lt;/span&gt; example.com &lt;span class=&quot;token parameter variable&quot;&gt;--body&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;jq &lt;span class=&quot;token parameter variable&quot;&gt;-nc&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token parameter variable&quot;&gt;--arg&lt;/span&gt; n &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$host&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;--arg&lt;/span&gt; t &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$TUNNEL_ID&lt;/span&gt;.cfargotunnel.com&quot;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token string&quot;&gt;&#39;{type: &quot;CNAME&quot;, name: $n, content: $t, proxied: true}&#39;&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;done&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Store the connector token in a file readable only by you. Passing it with &lt;code&gt;--token-file&lt;/code&gt; later keeps it out of process listings and shell history.&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;700&lt;/span&gt; ~/.cloudflared&lt;br /&gt;cf tunnels token get &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$TUNNEL_ID&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; jq &lt;span class=&quot;token parameter variable&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; ~/.cloudflared/laptop.token&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;chmod&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;600&lt;/span&gt; ~/.cloudflared/laptop.token&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;5.-allow-the-public-hostname-in-the-agent&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#5.-allow-the-public-hostname-in-the-agent&quot;&gt;&lt;span&gt;5. Allow the public hostname in the agent&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Many local web UIs validate the &lt;code&gt;Host&lt;/code&gt; and &lt;code&gt;Origin&lt;/code&gt; headers to block DNS rebinding. If yours does, it will reject &lt;code&gt;agent.example.com&lt;/code&gt; until you add that hostname to its allow-list. The setting is tool-specific. It is usually an environment variable or a config key. Do not work around it by rewriting the &lt;code&gt;Host&lt;/code&gt; header at the connector; that breaks same-origin checks for the UI&#39;s API calls.&lt;/p&gt;
+&lt;h2 id=&quot;6.-enable-screen-sharing-and-the-browser-bridge&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#6.-enable-screen-sharing-and-the-browser-bridge&quot;&gt;&lt;span&gt;6. Enable screen sharing and the browser bridge&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In &lt;strong&gt;System Settings → General → Sharing&lt;/strong&gt;, turn on &lt;strong&gt;Screen Sharing&lt;/strong&gt; and limit &lt;strong&gt;Allow access for&lt;/strong&gt; to your account. Screen Sharing listens on port 5900 on every network interface, not only loopback, so it is reachable from your local network. Keep the macOS firewall on, and avoid leaving it enabled on shared or public Wi-Fi.&lt;/p&gt;
+&lt;p&gt;Then install the browser client and the WebSocket bridge:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; clone &lt;span class=&quot;token parameter variable&quot;&gt;--depth&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt; https://github.com/novnc/noVNC ~/remote-access/noVNC&lt;br /&gt;python3 &lt;span class=&quot;token parameter variable&quot;&gt;-m&lt;/span&gt; pip &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;--user&lt;/span&gt; websockify&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When you connect, noVNC prompts for a username and password. Those are your macOS account credentials, not a VNC password, because macOS offers Apple Remote Desktop authentication first.&lt;/p&gt;
+&lt;h2 id=&quot;7.-add-a-start%2Fstop-script&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#7.-add-a-start%2Fstop-script&quot;&gt;&lt;span&gt;7. Add a start/stop script&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The agent keeps its own lifecycle. This script manages only the bridge and the tunnel connector. Save it as &lt;code&gt;remote&lt;/code&gt; somewhere on your &lt;code&gt;PATH&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token shebang important&quot;&gt;#!/usr/bin/env bash&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# remote: start, stop, and inspect the remote-access stack on demand&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token builtin class-name&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-u&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token assign-left variable&quot;&gt;RUN&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token environment constant&quot;&gt;$HOME&lt;/span&gt;/remote-access/run&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;&quot;&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token function-name function&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token function&quot;&gt;nohup&lt;/span&gt; websockify &lt;span class=&quot;token parameter variable&quot;&gt;--web&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token environment constant&quot;&gt;$HOME&lt;/span&gt;/remote-access/noVNC&quot;&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;127.0&lt;/span&gt;.0.1:6080 &lt;span class=&quot;token number&quot;&gt;127.0&lt;/span&gt;.0.1:5900 &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;/novnc.log&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;2&lt;/span&gt;&gt;&lt;/span&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;&amp;amp;1&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;amp;&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token builtin class-name&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;token variable&quot;&gt;$!&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;/novnc.pid&quot;&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;  &lt;span class=&quot;token function&quot;&gt;nohup&lt;/span&gt; cloudflared tunnel run --token-file &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token environment constant&quot;&gt;$HOME&lt;/span&gt;/.cloudflared/laptop.token&quot;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;/tunnel.log&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;2&lt;/span&gt;&gt;&lt;/span&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;&amp;amp;1&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;amp;&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token builtin class-name&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;token variable&quot;&gt;$!&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;/tunnel.pid&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token function-name function&quot;&gt;stop&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;token for-or-select variable&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;&quot;&lt;/span&gt;/*.pid&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;do&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$f&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;continue&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token function&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$f&lt;/span&gt;&quot;&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;2&lt;/span&gt;&gt;&lt;/span&gt;/dev/null&lt;br /&gt;    &lt;span class=&quot;token function&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$f&lt;/span&gt;&quot;&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token keyword&quot;&gt;done&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token function-name function&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;token for-or-select variable&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$RUN&lt;/span&gt;&quot;&lt;/span&gt;/*.pid&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;do&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$f&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;continue&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token assign-left variable&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;basename&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$f&lt;/span&gt;&quot;&lt;/span&gt; .pid&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-0&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$f&lt;/span&gt;&quot;&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;2&lt;/span&gt;&gt;&lt;/span&gt;/dev/null&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;then&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$name&lt;/span&gt;: up&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$name&lt;/span&gt;: down&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;fi&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token keyword&quot;&gt;done&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;${1&lt;span class=&quot;token operator&quot;&gt;:-&lt;/span&gt;status}&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt;&lt;br /&gt;  start&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  start &lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;br /&gt;  stop&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;   stop &lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;br /&gt;  status&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; status &lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;br /&gt;  *&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;token builtin class-name&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;usage: remote {start|stop|status}&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;&amp;amp;2&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;exit&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;esac&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;pip install --user&lt;/code&gt; places &lt;code&gt;websockify&lt;/code&gt; under &lt;code&gt;~/Library/Python/&amp;lt;version&amp;gt;/bin&lt;/code&gt;. Add that directory to your &lt;code&gt;PATH&lt;/code&gt; or use the absolute path in the script.&lt;/p&gt;
+&lt;h2 id=&quot;8.-verify&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#8.-verify&quot;&gt;&lt;span&gt;8. Verify&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;remote start&lt;br /&gt;cf tunnels list &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; jq &lt;span class=&quot;token string&quot;&gt;&#39;.[] | {name, status}&#39;&lt;/span&gt;                     &lt;span class=&quot;token comment&quot;&gt;# expect &quot;healthy&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;curl&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-sI&lt;/span&gt; https://agent.example.com &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-iE&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;^(HTTP|location)&#39;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# expect: HTTP/2 302 and a location under &amp;lt;team&gt;.cloudflareaccess.com&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;302&lt;/code&gt; to the Access login page is the most important check: it shows that unauthenticated requests stop at the edge.&lt;/p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://swopnil.com/img/blog/remote-access-status.png&quot; alt=&quot;Terminal output showing the bridge and tunnel connector running.&quot; width=&quot;1000&quot; height=&quot;126&quot; loading=&quot;lazy&quot; /&gt;
+  &lt;figcaption&gt;Status output from the script; the tunnel reports healthy before you test the hostnames.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;Then, in a browser:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;https://agent.example.com&lt;/code&gt; → email one-time code → the agent UI.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;https://desk.example.com/vnc.html?autoconnect=1&amp;amp;resize=scale&lt;/code&gt; → email one-time code → the desktop, scaled to the window.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;9.-run-it-unattended&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#9.-run-it-unattended&quot;&gt;&lt;span&gt;9. Run it unattended&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Keep the laptop awake and logged in so it keeps serving:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;sudo&lt;/span&gt; pmset &lt;span class=&quot;token parameter variable&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;sleep&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt; displaysleep &lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt; disksleep &lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Set &lt;strong&gt;Lock Screen → Require password after screen saver begins or display is turned off&lt;/strong&gt; to &lt;strong&gt;Never&lt;/strong&gt;, so the desktop shows instead of a lock screen. Keep the lid open and the laptop on power; closing the lid puts it to sleep regardless, unless it is in clamshell mode with an external display. Revert with &lt;code&gt;sudo pmset restoredefaults&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To make the stack start on boot, install the &lt;code&gt;remote start&lt;/code&gt; command as a user agent:&lt;/p&gt;
+&lt;pre class=&quot;language-xml&quot;&gt;&lt;code class=&quot;language-xml&quot;&gt;# ~/Library/LaunchAgents/com.example.remote.plist&lt;br /&gt;&lt;span class=&quot;token prolog&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token doctype&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;!&lt;/span&gt;&lt;span class=&quot;token doctype-tag&quot;&gt;DOCTYPE&lt;/span&gt; &lt;span class=&quot;token name&quot;&gt;plist&lt;/span&gt; &lt;span class=&quot;token name&quot;&gt;PUBLIC&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;-//Apple//DTD PLIST 1.0//EN&quot;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;plist&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;1.0&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;dict&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;key&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;Label&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;key&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;string&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;com.example.remote&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;string&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;key&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;ProgramArguments&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;key&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;array&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;string&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;/usr/local/bin/remote&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;string&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;string&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;start&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;string&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;array&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;key&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;RunAtLoad&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;key&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;true&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;/&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;dict&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;plist&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;launchctl load ~/Library/LaunchAgents/com.example.remote.plist&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Or keep it on demand and run &lt;code&gt;caffeinate -dimsu&lt;/code&gt; in a login item to block sleep while you leave it up. Either way, remember the trade-off: an always-on, always-unlocked desktop is a bigger target, so leave it unattended only where the machine is physically secure.&lt;/p&gt;
+&lt;h2 id=&quot;troubleshooting&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#troubleshooting&quot;&gt;&lt;span&gt;Troubleshooting&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Symptom&lt;/th&gt;
+&lt;th&gt;Cause&lt;/th&gt;
+&lt;th&gt;Fix&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;quot;There are no login methods available&amp;quot;&lt;/td&gt;
+&lt;td&gt;No identity provider configured&lt;/td&gt;
+&lt;td&gt;Step 2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;Untrusted request&lt;/code&gt; from the agent&lt;/td&gt;
+&lt;td&gt;Host allow-list in the agent&lt;/td&gt;
+&lt;td&gt;Step 5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;noVNC asks for a username&lt;/td&gt;
+&lt;td&gt;macOS offers Apple Remote Desktop auth first&lt;/td&gt;
+&lt;td&gt;Use your macOS account credentials&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Desktop is too large to read&lt;/td&gt;
+&lt;td&gt;macOS ignores remote resize requests&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;resize=scale&lt;/code&gt;, or lower the display resolution&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Tunnel shows &lt;code&gt;inactive&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Connector is not running&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;remote status&lt;/code&gt;; check &lt;code&gt;~/remote-access/run/tunnel.log&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Lock screen instead of the desktop&lt;/td&gt;
+&lt;td&gt;Auto-lock is enabled&lt;/td&gt;
+&lt;td&gt;Step 9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&quot;teardown&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#teardown&quot;&gt;&lt;span&gt;Teardown&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;remote stop&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;token for-or-select variable&quot;&gt;host&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; agent desk&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;do&lt;/span&gt;&lt;br /&gt;  &lt;span class=&quot;token assign-left variable&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;cf dns records list &lt;span class=&quot;token parameter variable&quot;&gt;--zone&lt;/span&gt; example.com &lt;span class=&quot;token parameter variable&quot;&gt;--name&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$host&lt;/span&gt;.example.com&quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; jq &lt;span class=&quot;token parameter variable&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;.[0].id&#39;&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;  cf dns records delete &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$id&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;--zone&lt;/span&gt; example.com&lt;br /&gt;&lt;span class=&quot;token keyword&quot;&gt;done&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;cf tunnels delete &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$TUNNEL_ID&lt;/span&gt;&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-f&lt;/span&gt; ~/.cloudflared/laptop.token&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, delete the two Access applications (&lt;code&gt;cf zero-trust access applications delete &amp;lt;app-id&amp;gt;&lt;/code&gt;), turn off Screen Sharing, and restore your power and lock-screen settings.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Homebrew: Remove a Formula and Its Unused Dependencies</title>
     <link href="https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/"/>
     <updated>2021-10-10T00:00:00Z</updated>
     <id>https://swopnil.com/blog/homebrew-remove-all-dependencies-for-a-package/</id>
-    <content type="html">&lt;p&gt;TLDR: Use the following command to remove a Homebrew package with all dependencies.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join &amp;lt;(brew leaves) &amp;lt;(brew deps ${pkg}))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr /&gt;
-&lt;p&gt;Homebrew is quite convenient when installing and upgrading packages, however, with a relatively large package (a.k.a formula), such as &lt;code&gt;ffmpeg&lt;/code&gt;, Homebrew can end up installing numerous dependencies on your system.&lt;/p&gt;
-&lt;p&gt;When we inspect the dependencies of &lt;code&gt;ffmpeg&lt;/code&gt; we notice that the formula has over 20 dependencies that will get installed onto your system. Furthermore, many of these dependencies have their own sub-dependencies.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;
-$ brew info ffmpeg 
-
-ffmpeg: stable 4.4 (bottled), HEAD
-Play, record, convert, and stream audio and video
-https://ffmpeg.org/
-Not installed
-From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/ffmpeg.rb
-License: GPL-2.0-or-later
-==&amp;gt; Dependencies
-Build: nasm ✘, pkg-config ✔
-Required: aom ✘, dav1d ✘, fontconfig ✘, freetype ✘, frei0r ✘, gnutls ✘, lame ✘, libass ✘, libbluray ✘, libsoxr ✘, libvidstab ✘, libvorbis ✘, libvpx ✘, opencore-amr ✘, openjpeg ✘, opus ✘, rav1e ✘, rubberband ✘, sdl2 ✘, snappy ✘, speex ✘, srt ✘, tesseract ✘, theora ✘, webp ✘, x264 ✘, x265 ✘, xvid ✘, xz ✘, zeromq ✘, zimg ✘
-==&amp;gt; Options
---HEAD
-        Install HEAD version
-==&amp;gt; Analytics
-install: 69,644 (30 days), 232,638 (90 days), 1,609,320 (365 days)
-install-on-request: 54,902 (30 days), 184,917 (90 days), 1,330,816 (365 days)
-build-error: 0 (30 days)
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Brew has a command that removes a package,&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ brew remove [FORMULA]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;however this will only remove the main formula and not any of the dependencies.&lt;/p&gt;
-&lt;p&gt;To remove the main package and all its dependencies, we will use the following command. Remember to replace &lt;code&gt;[FORMULA]&lt;/code&gt;, with the package that you want to remove with all dependencies.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join &amp;lt;(brew leaves) &amp;lt;(brew deps ${pkg}))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;What is the logic here?&lt;/strong&gt;&lt;/p&gt;
+    <content type="html">&lt;p&gt;Large formulae pull in a lot of dependencies. At the time of writing, &lt;code&gt;ffmpeg&lt;/code&gt; depended on more than 30 other formulae, many with dependencies of their own. &lt;code&gt;brew uninstall ffmpeg&lt;/code&gt; removes &lt;code&gt;ffmpeg&lt;/code&gt; and leaves all of them behind.&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;brew info ffmpeg&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# ==&gt; Dependencies&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# Build: nasm, pkg-config&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# Required: aom, dav1d, fontconfig, freetype, frei0r, gnutls, lame, libass, ...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;the-short-answer&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#the-short-answer&quot;&gt;&lt;span&gt;The short answer&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Since Homebrew 2.5.9 (late 2020), the built-in way is:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;brew uninstall ffmpeg&lt;br /&gt;brew autoremove --dry-run   &lt;span class=&quot;token comment&quot;&gt;# review what would be removed&lt;/span&gt;&lt;br /&gt;brew autoremove&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;autoremove&lt;/code&gt; uninstalls formulae that were installed only as dependencies and that nothing else installed still needs. It reads Homebrew&#39;s own record of what you asked for (&lt;code&gt;installed_on_request&lt;/code&gt;) and what came along as a dependency, so it won&#39;t remove a dependency that another formula still uses, or one you installed directly.&lt;/p&gt;
+&lt;h2 id=&quot;the-older-one-liner&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#the-older-one-liner&quot;&gt;&lt;span&gt;The older one-liner&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Before &lt;code&gt;autoremove&lt;/code&gt;, the common approach looked like this. I originally published it in this post:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token assign-left variable&quot;&gt;pkg&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;ffmpeg&lt;br /&gt;brew uninstall &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$pkg&lt;/span&gt;&quot;&lt;/span&gt;&lt;br /&gt;brew uninstall &lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;brew leaves&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;brew deps &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$pkg&lt;/span&gt;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;How it works:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;We create a variable &lt;code&gt;pkg&lt;/code&gt; and set it to the package to be uninstalled&lt;/li&gt;
-&lt;li&gt;We remove the main package &lt;code&gt;pkg&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;We use join to list all the packages installed in the system, and find packages that are solely dependencies of &lt;code&gt;pkg&lt;/code&gt; and uninstall each of those packages&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;brew deps &amp;quot;$pkg&amp;quot;&lt;/code&gt; lists the formula&#39;s dependencies.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;brew leaves&lt;/code&gt; lists installed formulae that no other installed formula depends on.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;join&lt;/code&gt; keeps the names in both lists: dependencies of &lt;code&gt;pkg&lt;/code&gt; that are now leaves, so nothing else needs them.&lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;It works for simple cases but has sharp edges:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;It can remove things you meant to keep.&lt;/strong&gt; &lt;code&gt;brew leaves&lt;/code&gt; includes formulae you installed on purpose. If you installed &lt;code&gt;pkg-config&lt;/code&gt; yourself, it is still a leaf and still a dependency of &lt;code&gt;ffmpeg&lt;/code&gt;, so it gets removed. &lt;code&gt;autoremove&lt;/code&gt; knows the difference.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;It only cleans up one level.&lt;/strong&gt; Sub-dependencies become leaves only after their parents are removed, so you have to run it repeatedly.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;join&lt;/code&gt; assumes sorted input.&lt;/strong&gt; Both commands happen to print sorted output today; nothing guarantees it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Use &lt;code&gt;brew autoremove&lt;/code&gt;, and pass &lt;code&gt;--dry-run&lt;/code&gt; first whenever you&#39;re unsure.&lt;/p&gt;
 </content>
   </entry>
   <entry>
@@ -62,177 +280,138 @@ build-error: 0 (30 days)
     <link href="https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/"/>
     <updated>2021-07-11T00:00:00Z</updated>
     <id>https://swopnil.com/blog/valid-digest-integrity-error-hugo-styling/</id>
-    <content type="html">&lt;h2&gt;Issue&lt;/h2&gt;
-&lt;p&gt;While using Hugo and installing a theme, I encountered this issue. Here are some characteristics.&lt;/p&gt;
-&lt;p&gt;While using Hugo, the CSS / styling of the page is not loaded, and the page contains just the plain document, with all the HTML as it is in the source code in the deployed website.&lt;/p&gt;
-&lt;p&gt;On the hugo server, in a new browser session the content loads properly as well as all the related styles / CSS.&lt;/p&gt;
-&lt;p&gt;Lastly, when opening the browser console on the deployed website, the following error is found:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Failed to find a valid digest in the &#39;integrity&#39; attribute for resource &#39;***&#39; with computed SHA-256 integrity &#39;***&#39;. The resource has been blocked.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;Debugging the Issue&lt;/h2&gt;
-&lt;p&gt;While researching this issue, for my setup, I noticed there are 3 parts to my pipeline / deployment environment that could have caused this problem. If you use any of these tools for your deployment, you can apply the solution specific to the tools that you are using.&lt;/p&gt;
-&lt;h3&gt;Solution 1: CloudFlare Cache&lt;/h3&gt;
-&lt;p&gt;Firstly, if you are using CloudFlare as your DNS Provider, this could be a DNS Cache Issue. Although in this case your issue should resolve itself in 24-28 hours automatically.&lt;/p&gt;
-&lt;p&gt;Nevertheless, you can try the following:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Purge the Cache&lt;/p&gt;
+    <content type="html">&lt;h2 id=&quot;symptom&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#symptom&quot;&gt;&lt;span&gt;Symptom&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The deployed site renders as unstyled HTML, while &lt;code&gt;hugo server&lt;/code&gt; looks fine locally. The browser console shows:&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;Failed to find a valid digest in the &#39;integrity&#39; attribute for resource &#39;…/style.min.&lt;hash&gt;.css&#39;&lt;br /&gt;with computed SHA-256 integrity &#39;…&#39;. The resource has been blocked.&lt;/hash&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;why-it-happens&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#why-it-happens&quot;&gt;&lt;span&gt;Why it happens&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Many Hugo themes use &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity&quot;&gt;Subresource Integrity&lt;/a&gt; (SRI). At build time, Hugo fingerprints the stylesheet and writes its hash into the page:&lt;/p&gt;
+&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;link&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;rel&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;stylesheet&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;href&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;{{ $style.Permalink }}&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;integrity&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;{{ $style.Data.Integrity }}&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;crossorigin&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;anonymous&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The browser hashes the file it actually downloads and refuses to apply it if the two hashes differ. So this error always means one thing: &lt;strong&gt;the bytes the browser received are not the bytes Hugo hashed.&lt;/strong&gt; Something between the build and the browser changed the file.&lt;/p&gt;
+&lt;h2 id=&quot;cause-1%3A-a-cdn-rewrote-the-file&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#cause-1%3A-a-cdn-rewrote-the-file&quot;&gt;&lt;span&gt;Cause 1: a CDN rewrote the file&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;If the site sits behind Cloudflare, its optimizations could modify assets in transit:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;CloudFlare →  Caching Configurations → Purge Cache&lt;/li&gt;
-&lt;li&gt;If the root domain is your Hugo website, &lt;strong&gt;Purge Everything&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Otherwise, you can selectively purge the subdomains, pages where Hugo is hosted.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Auto Minify&lt;/strong&gt; (retired by Cloudflare in August 2024) re-minified CSS and JavaScript, which changes the bytes and breaks the hash.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Rocket Loader&lt;/strong&gt; rewrites how scripts load.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;If your theme relies on JavaScript for some styling, disable &lt;strong&gt;RocketLoader&lt;/strong&gt; as well in CloudFlare settings&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Solution 2: Git LF Line Ending&lt;/h3&gt;
-&lt;p&gt;Depending on which service you are using to host your code and deploy from, you may have run into an issue with Git, where line endings aren&#39;t common across development environments. If you are collaborating with someone or you are using multiple systems to commit your code follow this tutorial.&lt;/p&gt;
-&lt;p&gt;The goal is to automatically use the same character encoding &lt;a href=&quot;https://en.wikipedia.org/wiki/Newline&quot;&gt;CRLF&lt;/a&gt; for the newline character. If you are using GitHub.com as your code repository, follow this tutorial, otherwise refer to the relevant server &lt;a href=&quot;https://docs.github.com/en/enterprise-server@3.0/get-started/getting-started-with-git/configuring-git-to-handle-line-endings&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Based on your operating system, run the commands:&lt;/p&gt;
-&lt;p&gt;&lt;small&gt;MacOS / Linux&lt;/small&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ git config --global core.autocrlf input
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;small&gt;Windows&lt;/small&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ git config --global core.autocrlf true
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Next, refresh the repository:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Start by moving all the files (including the hidden . files) from your current folder to a backup folder&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Add and commit the empty folder&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ git add . -u
-$ git commit -m &amp;quot;Empty folder to prepare for line ending fix&amp;quot;
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Add back all the moved files from your backup folder&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Normalize and commit the files&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ git add . --renormalize
-$ git commit -m &amp;quot;Normalize all line endings&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Solution 3: Remove Integrity Altogether&lt;/h3&gt;
-&lt;p&gt;The last solution is to remove css file integrity altogether. Although, be warned, you don&#39;t want to do this if CORS is a concern for your website.&lt;/p&gt;
-&lt;p&gt;You can do this by going into the &lt;code&gt;baseof.html&lt;/code&gt;. Usually the path to this file is:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;layouts/_default/baseof.html&lt;/code&gt;,&lt;/p&gt;
-&lt;p&gt;but it may differ based on the theme you are using.&lt;/p&gt;
-&lt;p&gt;After opening the file,&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Find the reference link to the CSS file. It looks like the following with integrity enabled:&lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;link rel=&amp;quot;preload&amp;quot; href=&amp;quot;{{ $styles.Permalink }}&amp;quot; integrity=&amp;quot;{{ $styles.Data.Integrity }}&amp;quot; as=&amp;quot;style&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;Remove Integrity (replace with empty string)&lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;link rel=&amp;quot;preload&amp;quot; href=&amp;quot;{{ $styles.Permalink }}&amp;quot; integrity=&amp;quot;&amp;quot; as=&amp;quot;style&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;You may repeat this for all the resources that are not loading. This will ensure that none of the &lt;code&gt;.css&lt;/code&gt; file in your optimized build requires CORS integrity.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2&gt;References&lt;/h2&gt;
+&lt;p&gt;Disable these optimizations for the site, then purge the cache (&lt;strong&gt;Caching → Configuration → Purge Everything&lt;/strong&gt;, or purge just the affected URLs). Cached copies keep failing until they expire or are purged.&lt;/p&gt;
+&lt;h2 id=&quot;cause-2%3A-line-endings-changed-in-git&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#cause-2%3A-line-endings-changed-in-git&quot;&gt;&lt;span&gt;Cause 2: line endings changed in Git&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;If the theme or its assets were committed from different operating systems, Git can convert line endings (LF ↔ CRLF). The file in the build environment then differs from the one that was fingerprinted elsewhere. This was the confirmed fix for several people in the &lt;a href=&quot;https://github.com/lxndrblz/anatole/issues/114&quot;&gt;Anatole theme thread&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Normalize line endings for the repository:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# macOS / Linux: convert CRLF to LF on commit, never on checkout&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; config &lt;span class=&quot;token parameter variable&quot;&gt;--global&lt;/span&gt; core.autocrlf input&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Windows: check out CRLF, commit LF&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; config &lt;span class=&quot;token parameter variable&quot;&gt;--global&lt;/span&gt; core.autocrlf &lt;span class=&quot;token boolean&quot;&gt;true&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then re-normalize the files already in the repository:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;--renormalize&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; commit &lt;span class=&quot;token parameter variable&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;Normalize line endings&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A committed &lt;code&gt;.gitattributes&lt;/code&gt; file (for example, &lt;code&gt;* text=auto eol=lf&lt;/code&gt;) is more reliable than per-machine settings, because it travels with the repository. See GitHub&#39;s guide on &lt;a href=&quot;https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings&quot;&gt;configuring Git to handle line endings&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;cause-3-(last-resort)%3A-remove-the-integrity-check&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#cause-3-(last-resort)%3A-remove-the-integrity-check&quot;&gt;&lt;span&gt;Cause 3 (last resort): remove the integrity check&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;If you can&#39;t find what is modifying the file, you can remove the &lt;code&gt;integrity&lt;/code&gt; attribute from the theme&#39;s template, usually in &lt;code&gt;layouts/_default/baseof.html&lt;/code&gt; or a &lt;code&gt;head&lt;/code&gt; partial:&lt;/p&gt;
+&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;link&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;rel&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;stylesheet&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;href&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;{{ $style.Permalink }}&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This makes the error go away by turning off the check, not by fixing the cause. SRI matters most for files served from a third-party CDN; for a stylesheet served from your own origin, removing it is a smaller risk. Prefer fixing causes 1 and 2.&lt;/p&gt;
+&lt;h2 id=&quot;references&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#references&quot;&gt;&lt;span&gt;References&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings&quot;&gt;Configuring Git Line Endings | GitHub&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/lxndrblz/anatole/issues/114#issuecomment-828750909&quot;&gt;Valid Digest Integrity Issue | GitHub&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/alanorth/hugo-theme-bootstrap4-blog/issues/53&quot;&gt;SHA-256 Integrity Issue&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity&quot;&gt;Subresource Integrity, MDN&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings&quot;&gt;Configuring Git to handle line endings, GitHub Docs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/lxndrblz/anatole/issues/114&quot;&gt;Valid digest integrity issue, Anatole theme&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/alanorth/hugo-theme-bootstrap4-blog/issues/53&quot;&gt;SHA-256 integrity issue, hugo-theme-bootstrap4-blog&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </content>
   </entry>
   <entry>
-    <title>Setting Up: Getting Started with Hugo Sites</title>
+    <title>Workshop Prep: Building a Personal Site with Hugo</title>
     <link href="https://swopnil.com/blog/getting-started-with-Hugo-sites/"/>
     <updated>2020-10-16T00:00:00Z</updated>
     <id>https://swopnil.com/blog/getting-started-with-Hugo-sites/</id>
-    <content type="html">&lt;p&gt;Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the &amp;quot;Building a Personal Static Website&amp;quot; workshop on &lt;strong&gt;2020, Oct 18th&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;If you have any questions or trouble with this tutorial, you can message the &lt;a href=&quot;https://luthercs.slack.com/archives/C6Z17T3CK&quot;&gt;Luther ACM Slack channel&lt;/a&gt;.&lt;/p&gt;
-&lt;h2&gt;Philosophy&lt;/h2&gt;
-&lt;p&gt;Hugo is a fast, flexible static site generator, one of the most popular open source generators among the &lt;a href=&quot;https://jamstack.org/generators/&quot;&gt;numerous static site generators&lt;/a&gt; available. In can be a handy tool to create static websites fast on the go. It can also be an effective tool to host blogs, small web projects or other personal content.&lt;/p&gt;
-&lt;p&gt;In the workshop we will go over how to build a personal portfolio using Hugo. We will then host the website on &lt;a href=&quot;https://pages.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;, in a website that looks like &lt;a href=&quot;https://luthercss.github.io/&quot;&gt;this&lt;/a&gt;.&lt;/p&gt;
-&lt;h2&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;Basic familiarity with Git version control is recommended. If you don&#39;t plan to publish your website, Git will not be required. If you have already configured and used Git to push and pull from a repository, skip to Step 2.&lt;/p&gt;
-&lt;p&gt;Not familiar with Git? Do not worry! This assumption in this tutorial will be that you are unfamiliar with Git. I still recommend you to take a look at this &lt;a href=&quot;https://education.github.com/git-cheat-sheet-education.pdf&quot;&gt;Git Cheatsheet&lt;/a&gt; to get familiar with some basic commands.&lt;/p&gt;
-&lt;p&gt;The only commands we will be using for this tutorial are:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ git status
-$ git add &amp;lt;location&amp;gt;
-$ git commit -m &amp;quot;Your commit message&amp;quot;
-$ git push &amp;lt;remote&amp;gt; &amp;lt;master&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Step 1: Git &amp;amp; GitHub&lt;/h3&gt;
-&lt;p&gt;More importantly, be sure to setup your Git and GitHub account, so that your deployment into your GitHub site will work properly.&lt;/p&gt;
+    <content type="html">&lt;p&gt;&lt;em&gt;This post accompanied the ACM Luther workshop &amp;quot;Building a Personal Static Website&amp;quot; on October 18, 2020. The commands have been updated to work today.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;why-a-static-site-generator&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#why-a-static-site-generator&quot;&gt;&lt;span&gt;Why a static site generator&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://gohugo.io/&quot;&gt;Hugo&lt;/a&gt; is a fast, open-source static site generator. You write content in Markdown, Hugo renders it to plain HTML, and you can host the result almost anywhere for free. In the workshop we built a personal portfolio and published it on &lt;a href=&quot;https://pages.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;; the &lt;a href=&quot;https://luthercss.github.io/&quot;&gt;workshop example site&lt;/a&gt; is still online.&lt;/p&gt;
+&lt;p&gt;Before the workshop, set up Git and install Hugo.&lt;/p&gt;
+&lt;h2 id=&quot;step-1%3A-git-and-github&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#step-1%3A-git-and-github&quot;&gt;&lt;span&gt;Step 1: Git and GitHub&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The workshop uses only a handful of Git commands:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; status&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;path&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; commit &lt;span class=&quot;token parameter variable&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;Describe your change&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; push origin main&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If Git is new to you, GitHub&#39;s &lt;a href=&quot;https://education.github.com/git-cheat-sheet-education.pdf&quot;&gt;Git cheat sheet&lt;/a&gt; is a good one-page reference.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;If you don&#39;t have an account already, create a &lt;a href=&quot;https://github.com/&quot;&gt;GitHub account&lt;/a&gt;. You can sign up with any username that you like.&lt;/li&gt;
-&lt;li&gt;If you haven&#39;t installed Git, go ahead and install it in your computer. Here are the installation links for:
+&lt;li&gt;Create a &lt;a href=&quot;https://github.com/&quot;&gt;GitHub account&lt;/a&gt; if you don&#39;t have one.&lt;/li&gt;
+&lt;li&gt;Install Git:
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://gitforwindows.org/&quot;&gt;Windows&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://sourceforge.net/projects/git-osx-installer/files/git-2.23.0-intel-universal-mavericks.dmg/download?use_mirror=autoselect&quot;&gt;MacOS&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Ubuntu
-&lt;ul&gt;
-&lt;li&gt;Open your Terminal and run the command:&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;sudo apt-get install git-all&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Windows:&lt;/strong&gt; &lt;a href=&quot;https://gitforwindows.org/&quot;&gt;Git for Windows&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;macOS:&lt;/strong&gt; run &lt;code&gt;git --version&lt;/code&gt;; if Git isn&#39;t installed, macOS offers to install the Command Line Tools.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ubuntu / Debian:&lt;/strong&gt; &lt;code&gt;sudo apt install git&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Now, configure your identity on Git. Open any terminal app you have and enter the following. Replace the given examples with your details.&lt;/li&gt;
+&lt;li&gt;Set your name and email. Git records them on every commit.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ git config --global user.name &amp;quot;John Doe&amp;quot;
-$ git config --global user.email johndoe@example.com
-&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; config &lt;span class=&quot;token parameter variable&quot;&gt;--global&lt;/span&gt; user.name &lt;span class=&quot;token string&quot;&gt;&quot;Jane Doe&quot;&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;git&lt;/span&gt; config &lt;span class=&quot;token parameter variable&quot;&gt;--global&lt;/span&gt; user.email jane@example.com&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&quot;4&quot;&gt;
-&lt;li&gt;Now, follow this tutorial to &lt;a href=&quot;https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent&quot;&gt;Generate a new SSH key and add it to the ssh-agent&lt;/a&gt;. Remember to use the tutorial specific to your operating system.&lt;/li&gt;
-&lt;li&gt;Last step for this section, &lt;a href=&quot;https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account&quot;&gt;Add the new SSH key to your GitHub account&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent&quot;&gt;Generate an SSH key&lt;/a&gt; and &lt;a href=&quot;https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account&quot;&gt;add it to your GitHub account&lt;/a&gt;, so you can push without typing a password.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3&gt;Step 2: Installing Hugo (Windows)&lt;/h3&gt;
-&lt;p&gt;For Windows users, you can either go through this &lt;a href=&quot;https://gohugo.io/getting-started/installing/#windows&quot;&gt;text tutorial&lt;/a&gt; or watch a &lt;a href=&quot;https://www.youtube.com/watch?v=G7umPCU-8xc&quot;&gt;video tutorial&lt;/a&gt;. Both yield the same result of installing Hugo on your computer.&lt;/p&gt;
-&lt;h3&gt;Step 2: Installing Hugo (MacOS / Linux)&lt;/h3&gt;
-&lt;p&gt;If you are on MacOS or Linux i.e. any UNIX based operating system, you need to have &lt;code&gt;brew&lt;/code&gt; configured beforehand to install &lt;code&gt;hugo&lt;/code&gt;. To check if you have &lt;code&gt;brew&lt;/code&gt; installed, open your terminal and enter&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ brew -v
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol&gt;
-&lt;li&gt;Install &lt;code&gt;brew&lt;/code&gt; if you haven&#39;t already.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;Run &lt;code&gt;brew&lt;/code&gt; to install &lt;code&gt;hugo&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;brew install hugo
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;Check that &lt;code&gt;hugo&lt;/code&gt; is installed properly&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;
-# show the location of the hugo executable
-which hugo
-/usr/local/bin/hugo
-
-# show the installed version
-ls -l $( which hugo )
-lrwxr-xr-x  1 mdhender admin  30 Mar 28 22:19 /usr/local/bin/hugo -&amp;gt; ../Cellar/hugo/0.13_1/bin/hugo
-
-# verify that hugo runs correctly
-hugo version
-Hugo Static Site Generator v0.13 BuildDate: 2015-03-09T21:34:47-05:00
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If you get the output, congratulations! You should be all set for the workshop.&lt;/p&gt;
-&lt;h2&gt;Event&lt;/h2&gt;
-&lt;p&gt;Once you have setup both Git and Hugo on your computer, you are all set to begin. See you on Sunday! Let us know you have any questions or trouble with the setup.&lt;/p&gt;
-&lt;h2&gt;Author&lt;/h2&gt;
-&lt;p&gt;This tutorial is authored by &lt;a href=&quot;https://swopnil.com/&quot;&gt;Swopnil Shrestha&lt;/a&gt; as part of a workshop series for ACM Luther College for the 2020-2021 academic year.&lt;/p&gt;
+&lt;h2 id=&quot;step-2%3A-install-hugo&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#step-2%3A-install-hugo&quot;&gt;&lt;span&gt;Step 2: Install Hugo&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Follow the &lt;a href=&quot;https://gohugo.io/installation/&quot;&gt;official installation guide&lt;/a&gt; for your platform. The common options:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# macOS (Homebrew, from https://brew.sh)&lt;/span&gt;&lt;br /&gt;brew &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; hugo&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# Windows (winget)&lt;/span&gt;&lt;br /&gt;winget &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; Hugo.Hugo.Extended&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# Ubuntu / Debian&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;token function&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;apt&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; hugo&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Many themes need the &lt;strong&gt;extended&lt;/strong&gt; edition of Hugo for Sass support. The Homebrew and winget packages are extended; distribution packages may lag behind, so check the version.&lt;/p&gt;
+&lt;h2 id=&quot;step-3%3A-verify&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#step-3%3A-verify&quot;&gt;&lt;span&gt;Step 3: Verify&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;hugo version&lt;br /&gt;&lt;span class=&quot;token comment&quot;&gt;# hugo v0.xxx.x+extended ...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If that prints a version, you&#39;re ready for the workshop.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Prepared by &lt;a href=&quot;https://swopnil.com/&quot;&gt;Swopnil Shrestha&lt;/a&gt; for ACM Luther&#39;s 2020–21 workshop series.&lt;/em&gt;&lt;/p&gt;
 </content>
   </entry>
   <entry>
-    <title>Welcome</title>
+    <title>Building a toy VPN: cipher negotiation, Diffie-Hellman, and HMAC from first principles</title>
+    <link href="https://swopnil.com/blog/building-a-toy-vpn/"/>
+    <updated>2020-04-20T00:00:00Z</updated>
+    <id>https://swopnil.com/blog/building-a-toy-vpn/</id>
+    <content type="html">&lt;p&gt;A VPN makes two machines on an untrusted network behave as if they were on a private link: an observer on the path can see that traffic is flowing, but cannot read or modify it. For Luther College&#39;s CS-460 (Information Assurance and Security), I built the core of that idea as a small Python client and server. The code is on &lt;a href=&quot;https://github.com/swopnilnep/vpn&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It is not a VPN you should use. It has no routing or tunnel interface, and the cryptography has real flaws, which I list at the end. But building the handshake by hand is the fastest way I know to understand why production protocols look the way they do.&lt;/p&gt;
+&lt;h2 id=&quot;the-protocol&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#the-protocol&quot;&gt;&lt;span&gt;The protocol&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;A session has three phases: agree on a cipher, agree on a key, and exchange messages.&lt;/p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://swopnil.com/img/blog/vpn-handshake.png&quot; alt=&quot;Sequence diagram: the client proposes ciphers, the server chooses one, the two sides run a Diffie-Hellman exchange, compute a shared key, and the client sends an encrypted message with an HMAC that the server verifies.&quot; width=&quot;942&quot; height=&quot;848&quot; loading=&quot;lazy&quot; /&gt;
+  &lt;figcaption&gt;Figure 1. Cipher negotiation, Diffie-Hellman key exchange, and an authenticated message.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;h3 id=&quot;1.-cipher-negotiation&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#1.-cipher-negotiation&quot;&gt;&lt;span&gt;1. Cipher negotiation&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;The client sends the algorithms and key sizes it supports. The server intersects that list with its own and picks the strongest common option.&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;client → ProposedCiphers:AES:[128,192,256],Blowfish:[112,224,448],DES:[56]&lt;br /&gt;server → ChosenCipher:AES,256&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The selection logic is a set intersection, keeping the largest key size both sides support:&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;select_cipher&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;supported&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;dict&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; proposed&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;dict&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; Tuple&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;br /&gt;    common_ciphers &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;supported&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;keys&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;intersection&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;proposed&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;keys&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;br /&gt;    cipher&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; key_size &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; c &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; common_ciphers&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;br /&gt;        size &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;supported&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;c&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;proposed&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;c&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;br /&gt;        &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; size &lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; key_size&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;br /&gt;            cipher&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; key_size &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; c&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; size&lt;br /&gt;    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; cipher &lt;span class=&quot;token keyword&quot;&gt;or&lt;/span&gt; key_size &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;br /&gt;        &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Could not agree on a cipher&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;br /&gt;    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; cipher&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; key_size&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;2.-diffie-hellman-key-exchange&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#2.-diffie-hellman-key-exchange&quot;&gt;&lt;span&gt;2. Diffie-Hellman key exchange&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Each side generates a private value and sends &lt;code&gt;g^x mod p&lt;/code&gt;. Each then raises the other&#39;s public value to its own private exponent and arrives at the same shared secret, without that secret ever crossing the wire. I used the &lt;code&gt;diffiehellman&lt;/code&gt; package, which by default uses the 8192-bit MODP group from RFC 3526 and returns the SHA-256 hex digest of the shared secret.&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;client → DHMKE:&lt;client public=&quot;&quot; key=&quot;&quot;&gt;&lt;br /&gt;server → DHMKE:&lt;server public=&quot;&quot; key=&quot;&quot;&gt;&lt;/server&gt;&lt;/client&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The cipher key and initialization vector (IV) are then carved out of that digest: the key from the front, the IV from the back.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;key &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; shared_key&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;key_size &lt;span class=&quot;token operator&quot;&gt;//&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;encode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;          &lt;span class=&quot;token comment&quot;&gt;# first N characters&lt;/span&gt;&lt;br /&gt;iv &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; shared_key&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;ivlen&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;cipher_name&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;encode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;token comment&quot;&gt;# last 16 (AES) or 8 characters&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;3.-authenticated-messages&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#3.-authenticated-messages&quot;&gt;&lt;span&gt;3. Authenticated messages&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;The client pads each message to the block size, encrypts it in CBC mode, and appends an HMAC-SHA256 over the ciphertext. The server recomputes the HMAC and rejects the message if it differs.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;ciphertext &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; crypto&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;encrypt&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;add_padding&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;message&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;token comment&quot;&gt;# AES-CBC&lt;/span&gt;&lt;br /&gt;hashing&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;update&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;ciphertext&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;br /&gt;send&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;ciphertext &lt;span class=&quot;token operator&quot;&gt;+&lt;/span&gt; hashing&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hexdigest&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;encode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;token comment&quot;&gt;# ciphertext || HMAC&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Encrypting first and then authenticating the ciphertext is the right construction: it lets the receiver discard a tampered message without decrypting it. The server in this repository doesn&#39;t take advantage of that, though; it decrypts first and checks the HMAC second (flaw 6 below).&lt;/p&gt;
+&lt;h2 id=&quot;what-this-gets-right&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#what-this-gets-right&quot;&gt;&lt;span&gt;What this gets right&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Encrypt-then-MAC.&lt;/strong&gt; The MAC covers the ciphertext rather than the plaintext, which is the construction that, applied correctly, rules out padding-oracle attacks.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No secrets on the wire.&lt;/strong&gt; The key is derived from Diffie-Hellman rather than shipped or hard-coded.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;A large, standard group.&lt;/strong&gt; The default group is an RFC 3526 prime, not a homemade one.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;what-would-break-it&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#what-would-break-it&quot;&gt;&lt;span&gt;What would break it&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Re-reading this code years later, these are the issues I would flag in a review, roughly in order of severity.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;No authentication of the peers.&lt;/strong&gt; Unauthenticated Diffie-Hellman is vulnerable to a man-in-the-middle: an attacker on the path can run one exchange with the client and another with the server, then relay and read everything. Real protocols sign the exchange with a long-term key or certificate (TLS), or bind it to static keys known in advance (WireGuard).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;A downgrade attack on negotiation.&lt;/strong&gt; The cipher list is sent in plaintext and is never authenticated later. An attacker can strip AES from the proposal and force the weakest common option. The server in the repository only offers 56-bit DES, which is breakable with modest resources. TLS 1.3 prevents downgrades by including a hash of the entire handshake transcript in the final &lt;code&gt;Finished&lt;/code&gt; messages.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Low-entropy keys.&lt;/strong&gt; The key is taken from the &lt;em&gt;hex string&lt;/em&gt; of the digest, so each byte carries 4 bits of entropy instead of 8. An &amp;quot;AES-256&amp;quot; key built this way contains at most 128 bits of entropy. A key-derivation function such as HKDF should expand the shared secret into raw key bytes instead.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The same key for encryption and MAC.&lt;/strong&gt; Both the cipher and the HMAC use the same key. Separate keys, derived from the shared secret with different labels, are standard practice.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Predictable IVs.&lt;/strong&gt; The first IV is derived from the shared secret. Every later message continues the CBC chain from the previous ciphertext block, so each message&#39;s IV is known before it is encrypted. Predictable IVs were the weakness the BEAST attack exploited in TLS 1.0. CBC needs a fresh, unpredictable IV per message; a modern design would use an AEAD mode such as AES-GCM or ChaCha20-Poly1305 with a per-message nonce.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Decrypt before verify.&lt;/strong&gt; The server decrypts a message before checking its HMAC. With an encrypt-then-MAC scheme, the MAC should be verified first, in constant time, and the message dropped before any decryption happens. The comparison here is also an ordinary string &lt;code&gt;==&lt;/code&gt;, which can leak timing information; &lt;code&gt;hmac.compare_digest&lt;/code&gt; exists for this.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No replay protection.&lt;/strong&gt; Messages carry no sequence number, so a captured message can be re-sent. The rolling HMAC state makes naive replays fail, but only incidentally, and it also means a single dropped message desynchronizes the session.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ambiguous padding and framing.&lt;/strong&gt; Messages are padded with null bytes that are stripped on receipt, so a message that legitimately ends in &lt;code&gt;&#92;0&lt;/code&gt; is altered. Messages are also framed by single &lt;code&gt;recv(4096)&lt;/code&gt; calls, which assumes TCP preserves message boundaries; it does not.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;An unmaintained crypto library.&lt;/strong&gt; &lt;code&gt;pycrypto&lt;/code&gt; has been abandoned since 2013 and has known vulnerabilities. Its maintained successors are &lt;code&gt;pycryptodome&lt;/code&gt; and &lt;code&gt;cryptography&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;what-i-took-away&quot; tabindex=&quot;-1&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;https://swopnil.com/#what-i-took-away&quot;&gt;&lt;span&gt;What I took away&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Each of the flaws above maps onto a feature that real protocols treat as mandatory: peer authentication, transcript binding, key derivation, key separation, nonces, verify-before-decrypt, sequence numbers, and explicit framing. Building a version without them made it clear why each one exists. A handshake that works is a long way from one that is secure, and most of the engineering lives in the gap.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Built for Luther College&#39;s CS-460, Information Assurance and Security (2019–20). The protocol specification and scaffolding came from the course; the implementation is mine.&lt;/em&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Hello, World</title>
     <link href="https://swopnil.com/blog/welcome/"/>
     <updated>2019-04-01T00:00:00Z</updated>
     <id>https://swopnil.com/blog/welcome/</id>
-    <content type="html">&lt;p&gt;&lt;code&gt;&amp;quot;Hello, World!&amp;quot;&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;This is the obligatory first post. Welcome to my blog.&lt;/p&gt;
+    <content type="html">&lt;p&gt;The obligatory first post.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Hello, World!&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is where I&#39;ll keep notes on what I&#39;m building and learning: systems, side projects, and the occasional fix for a problem that took longer than it should have.&lt;/p&gt;
 </content>
   </entry>
 </feed>
