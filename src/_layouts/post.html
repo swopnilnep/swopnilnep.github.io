@@ -43,6 +43,16 @@
     </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+        (function () {
+            var t = document.documentElement.dataset.theme;
+            var theme = t === 'dark' ? 'dark'
+                      : t === 'light' ? 'neutral'
+                      : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'neutral');
+            mermaid.initialize({ startOnLoad: true, theme: theme });
+        })();
+    </script>
     <script src="/theme.js"></script>
 </body>
 </html>

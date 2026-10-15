@@ -1,9 +1,25 @@
 const pluginRss = require("@11ty/eleventy-plugin-rss");
 const fs = require("fs");
+const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 
 module.exports = function(eleventyConfig) {
   // Add RSS plugin
   eleventyConfig.addPlugin(pluginRss);
+
+  // Syntax highlighting for fenced code blocks (Prism, build-time)
+  eleventyConfig.addPlugin(syntaxHighlight);
+
+  // Mermaid: render ```mermaid fences as <pre class="mermaid"> (rendered client-side)
+  eleventyConfig.amendLibrary("md", (mdLib) => {
+    const defaultFence = mdLib.renderer.rules.fence;
+    mdLib.renderer.rules.fence = function (tokens, idx, options, env, self) {
+      const token = tokens[idx];
+      if (token.info.trim().split(/\s+/)[0].toLowerCase() === "mermaid") {
+        return `<pre class="mermaid">${mdLib.utils.escapeHtml(token.content)}</pre>\n`;
+      }
+      return defaultFence(tokens, idx, options, env, self);
+    };
+  });
   
   // Add global data for PGP key
   eleventyConfig.addGlobalData("pgpKey", () => {
