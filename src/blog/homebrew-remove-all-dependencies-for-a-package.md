@@ -1,59 +1,51 @@
 ---
 layout: post
-title: "Homebrew: Remove All Dependencies for a Package"
+title: "Homebrew: Remove a Formula and Its Unused Dependencies"
+summary: "brew uninstall removes only the formula you name. Here is how to clean up the dependencies it pulled in, and why the built-in command is safer than the shell one-liner."
 date: 2021-10-10
 ---
 
-TLDR: Use the following command to remove a Homebrew package with all dependencies.
-```bash
-$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join <(brew leaves) <(brew deps ${pkg}))
-```
-
----
-
-Homebrew is quite convenient when installing and upgrading packages, however, with a relatively large package (a.k.a formula), such as `ffmpeg`, Homebrew can end up installing numerous dependencies on your system.
-
-
-When we inspect the dependencies of `ffmpeg` we notice that the formula has over 20 dependencies that will get installed onto your system. Furthermore, many of these dependencies have their own sub-dependencies.
+Large formulae pull in a lot of dependencies. At the time of writing, `ffmpeg` depended on more than 30 other formulae, many with dependencies of their own. `brew uninstall ffmpeg` removes `ffmpeg` and leaves all of them behind.
 
 ```bash
-
-$ brew info ffmpeg 
-
-ffmpeg: stable 4.4 (bottled), HEAD
-Play, record, convert, and stream audio and video
-https://ffmpeg.org/
-Not installed
-From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/ffmpeg.rb
-License: GPL-2.0-or-later
-==> Dependencies
-Build: nasm ✘, pkg-config ✔
-Required: aom ✘, dav1d ✘, fontconfig ✘, freetype ✘, frei0r ✘, gnutls ✘, lame ✘, libass ✘, libbluray ✘, libsoxr ✘, libvidstab ✘, libvorbis ✘, libvpx ✘, opencore-amr ✘, openjpeg ✘, opus ✘, rav1e ✘, rubberband ✘, sdl2 ✘, snappy ✘, speex ✘, srt ✘, tesseract ✘, theora ✘, webp ✘, x264 ✘, x265 ✘, xvid ✘, xz ✘, zeromq ✘, zimg ✘
-==> Options
---HEAD
-        Install HEAD version
-==> Analytics
-install: 69,644 (30 days), 232,638 (90 days), 1,609,320 (365 days)
-install-on-request: 54,902 (30 days), 184,917 (90 days), 1,330,816 (365 days)
-build-error: 0 (30 days)
-
+brew info ffmpeg
+# ==> Dependencies
+# Build: nasm, pkg-config
+# Required: aom, dav1d, fontconfig, freetype, frei0r, gnutls, lame, libass, ...
 ```
 
-Brew has a command that removes a package,
+## The short answer
+
+Since Homebrew 2.5.9 (late 2020), the built-in way is:
 
 ```bash
-$ brew remove [FORMULA]
+brew uninstall ffmpeg
+brew autoremove --dry-run   # review what would be removed
+brew autoremove
 ```
 
-however this will only remove the main formula and not any of the dependencies.
+`autoremove` uninstalls formulae that were installed only as dependencies and that nothing else installed still needs. It reads Homebrew's own record of what you asked for (`installed_on_request`) and what came along as a dependency, so it won't remove a dependency that another formula still uses, or one you installed directly.
 
-To remove the main package and all its dependencies, we will use the following command. Remember to replace `[FORMULA]`, with the package that you want to remove with all dependencies. 
+## The older one-liner
+
+Before `autoremove`, the common approach looked like this. I originally published it in this post:
 
 ```bash
-$ pkg=[FORMULA]; brew rm ${pkg}; brew rm $(join <(brew leaves) <(brew deps ${pkg}))
+pkg=ffmpeg
+brew uninstall "$pkg"
+brew uninstall $(join <(brew leaves) <(brew deps "$pkg"))
 ```
 
-**What is the logic here?**
-1. We create a variable `pkg` and set it to the package to be uninstalled
-1. We remove the main package `pkg`
-3. We use join to list all the packages installed in the system, and find packages that are solely dependencies of `pkg` and uninstall each of those packages
+How it works:
+
+1. `brew deps "$pkg"` lists the formula's dependencies.
+2. `brew leaves` lists installed formulae that no other installed formula depends on.
+3. `join` keeps the names in both lists: dependencies of `pkg` that are now leaves, so nothing else needs them.
+
+It works for simple cases but has sharp edges:
+
+- **It can remove things you meant to keep.** `brew leaves` includes formulae you installed on purpose. If you installed `pkg-config` yourself, it is still a leaf and still a dependency of `ffmpeg`, so it gets removed. `autoremove` knows the difference.
+- **It only cleans up one level.** Sub-dependencies become leaves only after their parents are removed, so you have to run it repeatedly.
+- **`join` assumes sorted input.** Both commands happen to print sorted output today; nothing guarantees it.
+
+Use `brew autoremove`, and pass `--dry-run` first whenever you're unsure.

@@ -1,103 +1,69 @@
 ---
 layout: post
-title: "Setting Up: Getting Started with Hugo Sites"
+title: "Workshop Prep: Building a Personal Site with Hugo"
+summary: "Setup instructions for an ACM Luther workshop on building a personal static site with Hugo and publishing it on GitHub Pages."
 date: 2020-10-16
 ---
 
-Welcome to this ACM Luther tutorial to create a static site using Hugo. This blog post is intended to accompany the "Building a Personal Static Website" workshop on **2020, Oct 18th**.
+*This post accompanied the ACM Luther workshop "Building a Personal Static Website" on October 18, 2020. The commands have been updated to work today.*
 
-If you have any questions or trouble with this tutorial, you can message the [Luther ACM Slack channel](https://luthercs.slack.com/archives/C6Z17T3CK). 
+## Why a static site generator
 
-## Philosophy
+[Hugo](https://gohugo.io/) is a fast, open-source static site generator. You write content in Markdown, Hugo renders it to plain HTML, and you can host the result almost anywhere for free. In the workshop we built a personal portfolio and published it on [GitHub Pages](https://pages.github.com/); the [workshop example site](https://luthercss.github.io) is still online.
 
-Hugo is a fast, flexible static site generator, one of the most popular open source generators among the [numerous static site generators](https://jamstack.org/generators/) available. In can be a handy tool to create static websites fast on the go. It can also be an effective tool to host blogs, small web projects or other personal content. 
+Before the workshop, set up Git and install Hugo.
 
-In the workshop we will go over how to build a personal portfolio using Hugo. We will then host the website on [GitHub Pages](https://pages.github.com/), in a website that looks like [this](https://luthercss.github.io).
+## Step 1: Git and GitHub
 
-## Prerequisites
-
-Basic familiarity with Git version control is recommended. If you don't plan to publish your website, Git will not be required. If you have already configured and used Git to push and pull from a repository, skip to Step 2.
-
-Not familiar with Git? Do not worry! This assumption in this tutorial will be that you are unfamiliar with Git. I still recommend you to take a look at this [Git Cheatsheet](https://education.github.com/git-cheat-sheet-education.pdf) to get familiar with some basic commands.
-
-
-The only commands we will be using for this tutorial are:
+The workshop uses only a handful of Git commands:
 
 ```bash
-$ git status
-$ git add <location>
-$ git commit -m "Your commit message"
-$ git push <remote> <master>
+git status
+git add <path>
+git commit -m "Describe your change"
+git push origin main
 ```
 
-### Step 1: Git & GitHub
+If Git is new to you, GitHub's [Git cheat sheet](https://education.github.com/git-cheat-sheet-education.pdf) is a good one-page reference.
 
-More importantly, be sure to setup your Git and GitHub account, so that your deployment into your GitHub site will work properly.
-
-1. If you don't have an account already, create a [GitHub account](https://github.com/). You can sign up with any username that you like. 
-2. If you haven't installed Git, go ahead and install it in your computer. Here are the installation links for:
-    * [Windows](https://gitforwindows.org/)
-    * [MacOS](https://sourceforge.net/projects/git-osx-installer/files/git-2.23.0-intel-universal-mavericks.dmg/download?use_mirror=autoselect)
-    * Ubuntu
-        * Open your Terminal and run the command:
-        * `sudo apt-get install git-all`
-3. Now, configure your identity on Git. Open any terminal app you have and enter the following. Replace the given examples with your details.
-```bash
-$ git config --global user.name "John Doe"
-$ git config --global user.email johndoe@example.com
-```
-4. Now, follow this tutorial to [Generate a new SSH key and add it to the ssh-agent](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). Remember to use the tutorial specific to your operating system.
-5. Last step for this section, [Add the new SSH key to your GitHub account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account).
-
-### Step 2: Installing Hugo (Windows)
-
-For Windows users, you can either go through this [text tutorial](https://gohugo.io/getting-started/installing/#windows) or watch a [video tutorial](https://www.youtube.com/watch?v=G7umPCU-8xc). Both yield the same result of installing Hugo on your computer.
-
-### Step 2: Installing Hugo (MacOS / Linux)
-
-If you are on MacOS or Linux i.e. any UNIX based operating system, you need to have `brew` configured beforehand to install `hugo`. To check if you have `brew` installed, open your terminal and enter
+1. Create a [GitHub account](https://github.com/) if you don't have one.
+2. Install Git:
+    - **Windows:** [Git for Windows](https://gitforwindows.org/)
+    - **macOS:** run `git --version`; if Git isn't installed, macOS offers to install the Command Line Tools.
+    - **Ubuntu / Debian:** `sudo apt install git`
+3. Set your name and email. Git records them on every commit.
 
 ```bash
-$ brew -v
+git config --global user.name "Jane Doe"
+git config --global user.email jane@example.com
 ```
 
-1. Install `brew` if you haven't already.
+4. [Generate an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account), so you can push without typing a password.
+
+## Step 2: Install Hugo
+
+Follow the [official installation guide](https://gohugo.io/installation/) for your platform. The common options:
 
 ```bash
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-2. Run `brew` to install `hugo`
-
-```bash
+# macOS (Homebrew, from https://brew.sh)
 brew install hugo
+
+# Windows (winget)
+winget install Hugo.Hugo.Extended
+
+# Ubuntu / Debian
+sudo apt install hugo
 ```
 
-3. Check that `hugo` is installed properly
+Many themes need the **extended** edition of Hugo for Sass support. The Homebrew and winget packages are extended; distribution packages may lag behind, so check the version.
+
+## Step 3: Verify
 
 ```bash
-
-# show the location of the hugo executable
-which hugo
-/usr/local/bin/hugo
-
-# show the installed version
-ls -l $( which hugo )
-lrwxr-xr-x  1 mdhender admin  30 Mar 28 22:19 /usr/local/bin/hugo -> ../Cellar/hugo/0.13_1/bin/hugo
-
-# verify that hugo runs correctly
 hugo version
-Hugo Static Site Generator v0.13 BuildDate: 2015-03-09T21:34:47-05:00
-
+# hugo v0.xxx.x+extended ...
 ```
 
-If you get the output, congratulations! You should be all set for the workshop.
+If that prints a version, you're ready for the workshop.
 
-## Event
-
-
-Once you have setup both Git and Hugo on your computer, you are all set to begin. See you on Sunday! Let us know you have any questions or trouble with the setup.
-
-## Author
-
-This tutorial is authored by [Swopnil Shrestha](https://swopnil.com) as part of a workshop series for ACM Luther College for the 2020-2021 academic year.
+*Prepared by [Swopnil Shrestha](https://swopnil.com) for ACM Luther's 2020–21 workshop series.*
